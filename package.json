@@ -4,7 +4,7 @@
   "description": "Standalone VK music player",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron ."
   },
   "repository": {
     "type": "git",
@@ -17,5 +17,10 @@
     "vkapi"
   ],
   "author": "uenify",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^1.6.10",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4"
+  }
 }

@@ -1,0 +1,230 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    height: 100%!important;
+    width: 100%!important;
+    margin: 0;
+}
+*::selection {
+    background: transparent;
+}
+.draggable {
+    -webkit-app-region: drag;
+    position: absolute;
+    z-index: 100;
+    height: 22px;
+    width: 100%;
+    top: 0;
+}
+#splash {
+    background: white;
+    z-index: 22;
+}
+.screen {
+    position: absolute!important;
+    height: 100%!important;
+    width: 100%!important;
+    background: white;
+}
+.login_logo {
+    background: #0AF;
+    -webkit-app-region: drag;
+}
+.login_title {
+    position: relative;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+}
+h1 {
+    font-size: 50px;
+    font-weight: 700;
+    margin: 0;
+}
+h5 {
+    font-weight: 300;
+    white-space: nowrap;
+    font-size: 16px;
+    color: #ccc;
+    margin: 12px;
+}
+.login_main {
+    position: absolute;
+}
+.login_footer {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    bottom: 5px;
+    font-size: 12px;
+    color: #eee;
+}
+#login_wrapper {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+#login_button {
+    color: #0AF;
+    cursor: pointer;
+}
+#logo {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: url(img/logo.png);
+    background-size: contain;
+    left: 50%;
+    margin-left: -100px;
+    margin-top: -100px;
+}
+@media screen and (max-width:549px) {
+    .login_logo {
+    height: 50%;
+    width: 100%}
+.login_main {
+    height: 50%;
+    width: 100%}
+#logo {
+    top: 25%}
+.item-pl {
+    margin: 0 15px 15px 15px;
+}
+}@media screen and (min-width:550px) {
+    .login_logo {
+    position: absolute;
+    height: 100%;
+    width: 50%}
+.login_main {
+    margin-left: 50%;
+    height: 100%;
+    width: 50%}
+#logo {
+    top: 50%}
+.item-pl {
+    width: calc(50% - 54.5px);
+    display: inline-block;
+    margin: 0 0 15px 15px;
+}
+#pl01 {
+    margin-right: -4px;
+}
+}.screen_header {
+    height: 56px;
+    width: calc(100% - 40px);
+    top: 0;
+    padding: 40px 20px 20px 20px;
+}
+#menu-button {
+    display: inline-block;
+    margin: 5px;
+}
+.screen_title {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 100%}
+.list-pl {
+    height: calc(100% - 116px);
+    overflow-y: auto;
+}
+.list {
+    height: calc(100% - 196px);
+    overflow-y: auto;
+}
+.item-pl {
+    position: relative;
+    padding: 16px;
+    background-color: #0AF;
+    height: 150px;
+    transition: 0.2s;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    background-size: 20%;
+    transition: .2;
+}
+.pl-home {
+    background-image: url(img/home.svg);
+}
+.pl-other {
+    background-image: url(img/pl.svg);
+}
+.item-pl:hover {
+    background-color: #3fbeff;
+}
+.item {
+    padding: 16px 32px 16px 32px;
+    border-bottom: 1px #eee solid;
+    transition: 0.2s;
+    color: rgba(0, 0, 0, .5);
+    cursor: pointer;
+}
+.item:hover {
+    background: rgba(0, 0, 0, .1);
+}
+.item:active {
+    background: rgba(0, 0, 0, .2);
+    color: rgba(255, 255, 255, .9);
+}
+.item_icon {
+    display: inline-block;
+    color: inherit;
+}
+.item_icon>.material-icons {
+    font-size: 30px;
+}
+.item_content {
+    display: inline-block;
+    margin-left: 12px;
+    width: calc(100% - 45px);
+}
+.item-pl_title {
+    margin: 0;
+    position: relative;
+    float: right;
+    margin-top: 124px;
+    width: 80%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right;
+}
+.item_title {
+    margin: 0;
+    color: inherit;
+    font-weight: 400;
+    font-size: 18px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.item_subtitle {
+    margin: 0;
+    color: inherit;
+    font-weight: 300;
+    font-size: 12px;
+}
+#Music {
+    opacity: 0;
+    z-index: 19;
+}
+#Playlists {
+    z-index: 20;
+}
+.-selected {
+    padding: 32px;
+    background: #00aaff!important;
+    color: white;
+}
+#controls {
+    position: fixed;
+    height: 80px;
+    width: 100%;
+    bottom: 0;
+    background: white;
+}
+.sortable-chosen {
+    background: #f0f;
+}
