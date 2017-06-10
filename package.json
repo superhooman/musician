@@ -1,0 +1,21 @@
+{
+  "name": "musician",
+  "version": "1.0.0",
+  "description": "Standalone VK music player",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "musician"
+  },
+  "keywords": [
+    "vk",
+    "music",
+    "player",
+    "vkapi"
+  ],
+  "author": "uenify",
+  "license": "ISC"
+}
