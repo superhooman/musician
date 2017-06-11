@@ -1,12 +1,13 @@
 var a;
+var prev, next
 function audio() {
-    var loop = 0;
+    var loop = false; //Повтор или нет
     function name(){
         $('.im_dialog_header_title_label').text($('.-selected').attr('data-title'))
         $('.im_dialog_header_status_label').text($('.-selected').attr('data-artist'))
     }
-    function nexttrack(){
-        var next = $('.-selected').next();
+    function nexttrack(){ //следующий трек
+        next = $('.-selected').next();
         if (next.length){
             next.addClass('-selected').siblings().removeClass('-selected');
             audio.load($(next).attr('data-src'));
@@ -23,8 +24,8 @@ function audio() {
             $('#mu').css("background", "url('img/icons.png') -30px 0px no-repeat")
         }
     }
-    function prevtrack(){
-        var prev = $('.-selected').prev();
+    function prevtrack(){ //предыдущий трек
+        prev = $('.-selected').prev();
         if (prev.length){
             prev.addClass('-selected').siblings().removeClass('-selected');
             audio.load($(prev).attr('data-src'));
@@ -33,8 +34,8 @@ function audio() {
             $('#playpause').css("background", "url('img/icons.png') -30px 0px no-repeat")
         }
     }
-    a = audiojs.createAll({
-        trackEnded: function() {
+    a = audiojs.createAll({ //Инициализация audio.js
+        trackEnded: function() { //На окончание трека
             if (!loop){
                 nexttrack()
             }else{
@@ -49,19 +50,18 @@ function audio() {
     name();
     audio.load(first);
     enable = false;
-    // Load in a track on click
-    audiocont = {
-        ClickedItem: function(e){
+    audiocont = { //Небольшой доступ к функциям аудио
+        ClickedItem: function(e){ //на клик по записи
             audio.load($('.-selected').attr('data-src'));
             name();
             audio.play();
             $('#playpause').css("background", "url('img/icons.png') -30px 0px no-repeat")
         },
-        Pause: function(e){
+        Pause: function(e){ //пауза, но не совсем
             audio.playPause();
         }
     }
-    // Keyboard shortcuts
+    //Управление на клавиши
     $(document).keydown(function(e) {
         var unicode = e.charCode ? e.charCode : e.keyCode;
         if (unicode == 39) {
@@ -79,6 +79,7 @@ function audio() {
         }
 
     })
+    //Управление на кнопки
     $('#next').click(function(e) {
         nexttrack()
     })
@@ -88,6 +89,7 @@ function audio() {
     $('#playpause').click(function(e) {
         audio.playPause();
     })
+    //Луп кнопочка и ее цвет
     $('#loop').click(function(e) {
         if (loop === 0){
                 loop = 1

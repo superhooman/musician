@@ -4,7 +4,7 @@ const url = require('url');
 
 let mainWindow;
 
-function createWindow(){
+function createWindow(){ //создаем окно
   mainWindow = new BrowserWindow({width: 350, height: 650, resizable: true, titleBarStyle: "hidden", minWidth: 320, minHeight: 450})
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),
@@ -20,6 +20,7 @@ function createWindow(){
 app.on('ready', createWindow)
 
 // Когда на макоси закрывают все окна
+// Это понадобится в будущем, а пока что просто выход
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') {
     app.quit()
