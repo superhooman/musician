@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <title>Musician</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
     <!-- normal script imports etc  -->
@@ -13,30 +12,42 @@
     <script src="js/audio.js"></script>
     <!-- Insert this line after script imports -->
     <script>if (window.module) module = window.module;</script>
-  <body id="react-dom">
-  </body>
-  <script>
-  const Кeact = require('react');
-  const ReactDOM = require('react-dom')
-  class Login extends Component {
-    render() {
-      return (
-
-        <div id="splash" className="screen">
-          <div className="login_logo"><div id="logo" /></div>
-          <div className="login_main">
-            <div className="login_title"><h1>Musician</h1><h5> Быстрый. Удобный. Красивый</h5><div id="login_wrapper"><i id="login_button" className="material-icons">arrow_forward</i></div></div>
-            <div className="login_footer">
-              <a data-href="https://vk.com/join" className="login_footer_link">Зарегистрироваться</a>
-              <span className="login_footer_bullet">•</span>
-              <a data-href="https://vk.com/restore" className="login_footer_link">Забыли пароль?</a>
+    <script src="js/audio-init.js"></script>
+  <body>
+    <div class="draggable"></div>
+    <div id="splash" class="screen">
+        <div class="login_logo"><div id="logo"></div></div>
+        <div class="login_main">
+            <div class="login_title"><h1>Musician</h1><h5> Быстрый. Удобный. Красивый</h5><div id="login_wrapper"><i id="login_button"  class="material-icons">arrow_forward</i></div></div>
+            <div class="login_footer">
+                <a data-href="https://vk.com/join" class="login_footer_link">Зарегистрироваться</a>
+                <span class="login_footer_bullet">•</span>
+                <a data-href="https://vk.com/restore" class="login_footer_link">Забыли пароль?</a>
             </div>
-          </div>
         </div>
-      );
-    }
-  }
-  ReactDOM.render(<Login />, document.getElementById('root'));
-  registerServiceWorker();
-  </script>
+    </div>
+    <div id="Playlists" class="screen">
+        <div class="screen_header">
+            <h1 class="screen_title">Плейлисты</h1>
+        </div>
+        <div id="list_playlist" class="list-pl">
+            <div id="pl01" class="item-pl pl-home" title="Основной плейлист">
+                <div class="item_icon">
+                    <i class="material-icons">home</i>
+                </div>
+                <h2 class="item-pl_title">Основной плейлист</h2>
+            </div>
+        </div>
+    </div>
+    <div id="Music" class="screen">
+        <div class="screen_header">
+            <h1 id="title-pl" class="screen_title">Основной плейлист</h1>
+        </div>
+        <div id="list_music" class="list">
+        </div>
+        <div id="controls"><audio preload=""></audio></div>
+    </div>
+  </body>
+  <script src="js/login-init.js"></script>
+  <script src="js/player-core.js"></script>
 </html>
