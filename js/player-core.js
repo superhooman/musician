@@ -76,6 +76,7 @@ function get_music() { //Получаем аудио из основного п�
             setTimeout('get_music()', timeout)
         },
         success: function(e){
+          console.log(e.response)
           create_music(e)
         }
     })
@@ -96,7 +97,7 @@ function get_album_music(albumid){ //Получаем аудио из опред
     })
 }
 
-function create_music(e){ //Расскидываем музыку в муз.лист
+function create_music(e){ //Раскидываем музыку в муз.лист
     for (var j in e.response) {
         get_offset++;
         if (e.response[j].aid != null && e.response[j].content_restricted !== 1) {
