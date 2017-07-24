@@ -13,7 +13,6 @@ function audio() {
             audio.load($(next).attr('data-src'));
             name();
             audio.play();
-            $('#playpause').css("background", "url('img/icons.png') -30px 0px no-repeat")
         }else{
             $('.-selected').removeClass('-selected');
             $('#list_music .item').first().addClass('-selected');
@@ -21,7 +20,6 @@ function audio() {
             name();
             audio.load(first);
             audio.play();
-            $('#mu').css("background", "url('img/icons.png') -30px 0px no-repeat")
         }
     }
     function prevtrack(){ //предыдущий трек
@@ -31,7 +29,6 @@ function audio() {
             audio.load($(prev).attr('data-src'));
             name();
             audio.play();
-            $('#playpause').css("background", "url('img/icons.png') -30px 0px no-repeat")
         }
     }
     a = audiojs.createAll({ //Инициализация audio.js
@@ -40,7 +37,6 @@ function audio() {
                 nexttrack()
             }else{
                 audio.play();
-                $('#playpause').css("background", "url('img/icons.png') -30px 0px no-repeat")
             }
         }
     });
@@ -55,10 +51,10 @@ function audio() {
             audio.load($('.-selected').attr('data-src'));
             name();
             audio.play();
-            $('#playpause').css("background", "url('img/icons.png') -30px 0px no-repeat")
+            $('.btn-play-pause').html('pause_circle_outline')
         },
         Pause: function(e){ //пауза, но не совсем
-            audio.playPause();
+            audio.pause();
         }
     }
     //Управление на клавиши

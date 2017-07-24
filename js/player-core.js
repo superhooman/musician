@@ -76,7 +76,6 @@ function get_music() { //Получаем аудио из основного п�
             setTimeout('get_music()', timeout)
         },
         success: function(e){
-          console.log(e.response)
           create_music(e)
         }
     })
@@ -104,7 +103,7 @@ function create_music(e){ //Раскидываем музыку в муз.лис
             $('#list_music').append('<div class="item" data-src="' + e.response[j].url + '" data-title="' + e.response[j].title + '" data-artist="' + e.response[j].artist + '" data-duration="' + e.response[j].duration + '"><div class="item_icon"><i class="material-icons">music_note</i></div><div class="item_content"><h2 class="item_title">' + e.response[j].title + '</h2><h3 class="item_subtitle">'+ e.response[j].artist +'</h3></div></div>')
         }
     }
-    $('.item').click(function(e) {
+    $('.item').click(function(e) { //Песня на клик
         $(this).addClass('-selected').siblings().removeClass('-selected');
         audiocont.ClickedItem()
     })
