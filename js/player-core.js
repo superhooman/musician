@@ -96,11 +96,12 @@ function get_album_music(albumid){ //Получаем аудио из опред
     })
 }
 
-function create_music(e){ //Раскидываем музыку в муз.лист
+function create_music(e){
+  //Раскидываем музыку в муз.лист
     for (var j in e.response) {
         get_offset++;
         if (e.response[j].aid != null && e.response[j].content_restricted !== 1) {
-            $('#list_music').append('<div class="item" data-src="' + e.response[j].url + '" data-title="' + e.response[j].title + '" data-artist="' + e.response[j].artist + '" data-duration="' + e.response[j].duration + '"><div class="item_icon"><i class="material-icons">music_note</i></div><div class="item_content"><h2 class="item_title">' + e.response[j].title + '</h2><h3 class="item_subtitle">'+ e.response[j].artist +'</h3></div></div>')
+            $('#list_music').append('<div onmouseover="getdrag('+e.response[j].aid+')" id="'+ e.response[j].aid +'" class="item" data-src="' + e.response[j].url + '" data-title="' + e.response[j].title + '" data-artist="' + e.response[j].artist + '" data-duration="' + e.response[j].duration + '"><div class="item_icon"><i class="material-icons">music_note</i></div><div class="item_content"><h2 class="item_title">' + e.response[j].title + '</h2><h3 class="item_subtitle">'+ e.response[j].artist +'</h3></div></div>')
         }
     }
     $('.item').click(function(e) { //Песня на клик
@@ -130,4 +131,10 @@ function music_list(){ //показать муз.лист
 function playlist_list(){ //показать плейлисты
     $('#Playlists').animate({left: '0%', opacity: 1}, 500);
     $('#Music').animate({opacity: 0}, 500);
+}
+function getdrag(id) {
+  var track = document.getElementById(id)
+  track.addEventListener("dragstart",function(evt){
+    evt.dataTransfer.setData("DownloadURL","application/octet-stream:"+track.getAttribute("data-artist")+" - "+track.getAttribute("data-title")+".mp3:"+track.getAttribute("data-src"));
+  },false);
 }
