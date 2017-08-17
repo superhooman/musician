@@ -4,7 +4,8 @@ var get_offset = 0;
 var audio_count = 50;
 var get_id;
 var get_token;
-
+var playlists = {}
+playlists.alb = []
 function check_uid() { //Делим все по переменным
     var s = url;
     var i = s.indexOf("access_token=");
@@ -30,7 +31,7 @@ function sec2time(seconds) { //Секунды в минуты:секунды
 
 var enable = true
 var prev = 0;
-
+var i = 0
 function get_playlists() { //Получаем плейлисты
     $.ajax({
         url: 'https://api.vk.com/method/audio.getAlbums?owner_id=' + get_id + '&count=100&offset=' + get_offset + '&access_token=' + get_token,
@@ -38,16 +39,20 @@ function get_playlists() { //Получаем плейлисты
         async: !0,
         timeout: 5500,
         error: function(xhr, ajaxOptions, thrownError) {
-            setTimeout('get_music()', timeout)
+            setTimeout('get_playlists()', timeout)
         },
         success: function(e) {
-            var plnum = 1;
+            var plnum = 0;
+            get_music()
             for (var j in e.response) {
+                console.log('Это j и она равна '+j)
                 if (e.response[j].album_id != null) {
-                    $('#list_playlist').append('<div id="pl'+pad2(plnum)+'" albumid="'+ e.response[j].album_id+'" title="'+e.response[j].title+'" class="item-pl pl-other"><div class="item_icon"><i class="material-icons">library_music</i></div><h2 class="item-pl_title">'+ e.response[j].title +'</h2></div>')
+                    get_album_music(e.response[j].album_id, plnum)
+                    $('#list_playlist').append('<div id="pl_'+plnum+'" plnum="'+plnum+'" albumid="'+ e.response[j].album_id+'" title="'+e.response[j].title+'" class="item-pl pl-other"><div class="item_icon"><i class="material-icons">library_music</i></div><div class="item-pl_text"><span id="audio_'+plnum+'"></span><h2 class="item-pl_title">'+ e.response[j].title +'</h2></div></div>')
                 }
                 plnum++
             }
+            console.log(playlists.alb)
             $('.item-pl').click(function(e){
                 get_offset = 0;
                 if(a){
@@ -56,15 +61,19 @@ function get_playlists() { //Получаем плейлисты
                 $('#list_music').empty()
                 $('#title-pl').text($(this).attr('title'))
 
-                if ($(this).attr('id') == 'pl01'){
-                    get_music()
+                if ($(this).attr('id') == 'pl_0'){
+                    create_music(playlists.alb[0])
                 }else{
-                    get_album_music($(this).attr('albumid'));
+                    create_music(playlists.alb[$(this).attr('plnum')])
                 }
                 music_list()
             })
+            
         }
     });
+}
+function fg(){
+    
 }
 function get_music() { //Получаем аудио из основного плейлиста
     $.ajax({
@@ -76,12 +85,13 @@ function get_music() { //Получаем аудио из основного п�
             setTimeout('get_music()', timeout)
         },
         success: function(e){
-          create_music(e)
+            playlists.alb[0] = e.response
+            $('#audio_0').html(playlists.alb[0].length + ' аудио')
         }
     })
 }
 
-function get_album_music(albumid){ //Получаем аудио из определенного плейлиста
+function get_album_music(albumid, id){ //Получаем аудио из определенного плейлиста
     $.ajax({
         url: 'https://api.vk.com/method/audio.get?owner_id=' + get_id + '&album_id='+albumid+'&count=200&offset=' + get_offset + '&access_token=' + get_token,
         dataType: "jsonp",
@@ -91,17 +101,18 @@ function get_album_music(albumid){ //Получаем аудио из опред
             setTimeout('get_music()', timeout)
         },
         success: function(e){
-          create_music(e)
+            playlists.alb[id] = e.response
+            $('#audio_'+id).html(playlists.alb[id].length + ' аудио')
         }
     })
 }
 
 function create_music(e){
   //Раскидываем музыку в муз.лист
-    for (var j in e.response) {
+    for (var j in e) {
         get_offset++;
-        if (e.response[j].aid != null && e.response[j].content_restricted !== 1) {
-            $('#list_music').append('<div onmouseover="getdrag('+e.response[j].aid+')" id="'+ e.response[j].aid +'" class="item" data-src="' + e.response[j].url + '" data-title="' + e.response[j].title + '" data-artist="' + e.response[j].artist + '" data-duration="' + e.response[j].duration + '"><div class="item_icon"><i class="material-icons">music_note</i></div><div class="item_content"><h2 class="item_title">' + e.response[j].title + '</h2><h3 class="item_subtitle">'+ e.response[j].artist +'</h3></div></div>')
+        if (e[j].aid != null && e[j].content_restricted !== 1) {
+            $('#list_music').append('<div onmouseover="getdrag('+e[j].aid+')" id="'+ e[j].aid +'" class="item" data-src="' + e[j].url + '" data-title="' + e[j].title + '" data-artist="' + e[j].artist + '" data-duration="' + e[j].duration + '"><div class="item_icon"><i class="material-icons">music_note</i></div><div class="item_content"><h2 class="item_title">' + e[j].title + '</h2><h3 class="item_subtitle">'+ e[j].artist +'</h3></div></div>')
         }
     }
     $('.item').click(function(e) { //Песня на клик

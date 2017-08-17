@@ -16,6 +16,7 @@ newWindowBtn.addEventListener('click', function (event) {
 })
 $('#login_button').click(function(){
     $('#splash').animate({left: '-100%', opacity: 0}, 500);
+    $('#Playlists').animate({left: '0', opacity: 1}, 500);
 })
 ipc.on('success', function (event, arg) {
     $('#splash').remove();

@@ -5,7 +5,7 @@ const url = require('url');
 let mainWindow;
 
 function createWindow(){ //создаем окно
-  mainWindow = new BrowserWindow({width: 350, height: 650, resizable: true, titleBarStyle: "hidden", minWidth: 320, minHeight: 450})
+  mainWindow = new BrowserWindow({width: 350, height: 650, resizable: true, titleBarStyle: "hidden", vibrancy: 'ultra-dark', minWidth: 320, minHeight: 450, maxWidth: 549})
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
