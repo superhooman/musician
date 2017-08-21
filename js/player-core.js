@@ -15,6 +15,7 @@ function check_uid() { //Делим все по переменным
     var uid = s.substr(i3 + 8);
     get_id = uid;
     get_token = token;
+    get_music()
     get_playlists();
 }
 
@@ -43,7 +44,6 @@ function get_playlists() { //Получаем плейлисты
         },
         success: function(e) {
             var plnum = 0;
-            get_music()
             for (var j in e.response) {
                 console.log('Это j и она равна '+j)
                 if (e.response[j].album_id != null) {
@@ -86,7 +86,13 @@ function get_music() { //Получаем аудио из основного п�
         },
         success: function(e){
             playlists.alb[0] = e.response
-            $('#audio_0').html(playlists.alb[0].length + ' аудио')
+            if (e.response.length == 200){
+                $('#audio_0').html('Более 200 аудио')
+            }else{
+                $('#audio_0').html(e.response.length + ' аудио')
+            }
+            
+            $('#pl_0').removeClass('hidden')
         }
     })
 }
@@ -112,12 +118,22 @@ function create_music(e){
     for (var j in e) {
         get_offset++;
         if (e[j].aid != null && e[j].content_restricted !== 1) {
-            $('#list_music').append('<div onmouseover="getdrag('+e[j].aid+')" id="'+ e[j].aid +'" class="item" data-src="' + e[j].url + '" data-title="' + e[j].title + '" data-artist="' + e[j].artist + '" data-duration="' + e[j].duration + '"><div class="item_icon"><i class="material-icons">music_note</i></div><div class="item_content"><h2 class="item_title">' + e[j].title + '</h2><h3 class="item_subtitle">'+ e[j].artist +'</h3></div></div>')
+            $('#list_music').append('<div onmouseover="getdrag('+e[j].aid+')" id="'+ e[j].aid +'" class="item" data-src="' + e[j].url + '" data-title="' + e[j].title + '" data-artist="' + e[j].artist + '" data-duration="' + e[j].duration + '"><div class="item-container"><div class="item_icon"><i class="material-icons">music_note</i></div><div class="item_content"><h2 class="item_title">' + e[j].title + '</h2><h3 class="item_subtitle">'+ e[j].artist +'</h3></div></div><div class="item-buttons"><i class="material-icons">more_vert</i></div><div class="drop"><a target="_blank" class="material-icons icons" href="'+ e[j].url+'" download="'+ e[j].artist +' - '+ e[j].title + '.mp3.mp3" title="Скачать">file_download</a><a onclick="$(this).parent().parent().remove()" class="material-icons icons" title="Удалить">clear</a></div></div>')
         }
     }
-    $('.item').click(function(e) { //Песня на клик
-        $(this).addClass('-selected').siblings().removeClass('-selected');
+    $('.item-container').click(function(e) { //Песня на клик
+        $(this).parent('.item').addClass('-selected').siblings().removeClass('-selected');
         audiocont.ClickedItem()
+    })
+    $('.item-buttons').click(function(e){
+        $('.drop.is-active').removeClass('is-active')
+        $('.material-icons.rot').removeClass('rot')
+        $(this).children('.material-icons').toggleClass('rot')
+        $(this).parent().children('.drop').toggleClass('is-active')
+        $(this).parent().children('.drop').mouseleave(function(){
+            $('.drop.is-active').removeClass('is-active')
+            $('.material-icons.rot').removeClass('rot')
+        })
     })
     var el = document.getElementById('list_music');
     var sortable = Sortable.create(el);

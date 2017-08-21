@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>Musician</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -31,7 +32,7 @@
             <h1 class="screen_title">Плейлисты</h1>
         </div>
         <div id="list_playlist" class="list-pl">
-            <div id="pl_0" class="item-pl pl-home" title="Основной плейлист">
+            <div id="pl_0" class="item-pl pl-home hidden" title="Основной плейлист">
                 <div class="item_icon">
                     <i class="material-icons">home</i>
                 </div>
@@ -51,6 +52,10 @@
         <div id="controls"><audio preload=""></audio></div>
     </div>
   </body>
+  <script>
+    const {webFrame} = require('electron')
+    webFrame.setZoomLevelLimits(1, 1)
+  </script>
   <script src="js/login-init.js"></script>
   <script src="js/player-core.js"></script>
 </html>

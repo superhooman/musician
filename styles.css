@@ -136,6 +136,9 @@ h5 {
     display: inline-block;
     margin: 5px;
 }
+.hidden{
+    display: none;
+}
 .screen_title {
     display: inline-block;
     overflow: hidden;
@@ -148,11 +151,13 @@ h5 {
     right: 20px;
     text-align: right;
     bottom: 20px;
+    width: calc(100% - 20px);
     display: block;
     position: absolute;
 }
 .item-pl_text>span{
     font-weight: 100;
+    display: block;
 }
 .list-pl {
     padding-top: 142px;
@@ -178,7 +183,16 @@ h5 {
     color: white;
     cursor: pointer;
     border-radius: 14px;
+    animation: item 1s;
     box-shadow: 0px 0px 50px 0px rgba(0,0,0,0.4);
+}
+@keyframes item {
+    from{
+        opacity: 0;
+    }
+    to{
+        opacity: 1;
+    }
 }
 .item-pl:hover {
     opacity: 0.8;
@@ -187,14 +201,59 @@ h5 {
     opacity: 0.4;
 }
 .item {
-    padding: 16px 32px 16px 32px;
     transition: 0.2s;
     color: rgba(255, 255, 255, .5);
-    cursor: pointer;
     margin-right: 10px;
     margin-left: 10px;
     border-radius: 6px;
     margin-bottom: 10px;
+}
+.item-container{
+    padding: 16px 32px 16px 32px;
+    width: calc(100% - 128px);
+    cursor: pointer;
+    display: inline-block;
+    transition: 0.2s;
+}
+.item-buttons{
+    display: inline-block;
+}
+.item-buttons>i{
+    cursor: pointer;
+    opacity: 0.8;
+    transition: 0.2s;
+}
+.rot{
+    transform: rotate(90deg);
+}
+.item-buttons:hover>i{
+    opacity: 1;
+}
+.drop{
+    width: 48px;
+    padding: 10px;
+    height: 24px;
+    transform: scale(0);
+    color: transparent;
+    transition: 0.2s;
+    float: right;
+    margin-top: -60px;
+    right: 18px;
+    border-radius: 4px;
+    position: relative;
+}
+.drop>.icons{
+    display: inline-block;
+    text-decoration: none;
+    color: rgba(255, 255, 255, .6);
+}
+.drop.is-active{
+    transform: scale(1);    
+    background: rgba(0,0,0,0.4);
+}
+.drop.is-active>.icons:hover{
+    cursor: pointer;
+    color: rgba(255, 255, 255, .9);
 }
 .item:hover {
     background: rgba(0, 0, 0, .1);
@@ -220,7 +279,10 @@ h5 {
 }
 .item-pl_title {
     margin: 0;
-    font-weight: 100;
+    font-weight: 400;
+    display: block;
+    width: 80%;
+    float: right;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -249,10 +311,12 @@ h5 {
     left: 100%;
 }
 .-selected {
-    padding: 32px;
     background: #242c46!important;
     color: white;
     box-shadow: 0px 0px 50px 0px rgba(0,0,0,0.4);
+}
+.-selected>.item-container{
+    padding: 32px;
 }
 #controls {
     position: fixed;
@@ -297,7 +361,7 @@ h5 {
   position: absolute;
   height: 8px;
   margin-top: -8px;
-  background-color: rgba(0,0,0,0.2);
+  background: linear-gradient(to right,rgba(0,0,0,0.2) 95%, transparent 100%);
   z-index: -2;
 }
 .play-pause{
