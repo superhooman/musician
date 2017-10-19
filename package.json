@@ -3,8 +3,18 @@
   "version": "1.0.0",
   "description": "Standalone music player for VK",
   "main": "main.js",
+  "build": {
+    "appId": "com.uenify.musician",
+    "mac": {
+      "category": "public.app-category.music",
+      "target": "dmg",
+      "icon": "icon.icns"
+    }
+  },
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "repository": {
     "type": "git",
@@ -25,5 +35,8 @@
   "homepage": "https://github.com/uenify/musician#readme",
   "dependencies": {
     "electron": "^1.6.10"
+  },
+  "devDependencies": {
+    "electron-builder": "^19.37.2"
   }
 }

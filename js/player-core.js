@@ -16,7 +16,7 @@ function check_uid() { //Делим все по переменным
     get_id = uid;
     get_token = token;
     get_music()
-    get_playlists();
+    //get_playlists();
 }
 
 function pad2(num) { //Перевод однозначных в двухзначные
@@ -43,37 +43,9 @@ function get_playlists() { //Получаем плейлисты
             setTimeout('get_playlists()', timeout)
         },
         success: function(e) {
-            var plnum = 0;
-            for (var j in e.response) {
-                console.log('Это j и она равна '+j)
-                if (e.response[j].album_id != null) {
-                    get_album_music(e.response[j].album_id, plnum)
-                    $('#list_playlist').append('<div id="pl_'+plnum+'" plnum="'+plnum+'" albumid="'+ e.response[j].album_id+'" title="'+e.response[j].title+'" class="item-pl pl-other"><div class="item_icon"><i class="material-icons">library_music</i></div><div class="item-pl_text"><span id="audio_'+plnum+'"></span><h2 class="item-pl_title">'+ e.response[j].title +'</h2></div></div>')
-                }
-                plnum++
-            }
-            console.log(playlists.alb)
-            $('.item-pl').click(function(e){
-                get_offset = 0;
-                if(a){
-                    audiocont.Pause()
-                }
-                $('#list_music').empty()
-                $('#title-pl').text($(this).attr('title'))
-
-                if ($(this).attr('id') == 'pl_0'){
-                    create_music(playlists.alb[0])
-                }else{
-                    create_music(playlists.alb[$(this).attr('plnum')])
-                }
-                music_list()
-            })
             
         }
     });
-}
-function fg(){
-    
 }
 function get_music() { //Получаем аудио из основного плейлиста
     $.ajax({
@@ -85,14 +57,7 @@ function get_music() { //Получаем аудио из основного п�
             setTimeout('get_music()', timeout)
         },
         success: function(e){
-            playlists.alb[0] = e.response
-            if (e.response.length == 200){
-                $('#audio_0').html('Более 200 аудио')
-            }else{
-                $('#audio_0').html(e.response.length + ' аудио')
-            }
-            
-            $('#pl_0').removeClass('hidden')
+            create_music(e.response)
         }
     })
 }
@@ -108,7 +73,6 @@ function get_album_music(albumid, id){ //Получаем аудио из опр
         },
         success: function(e){
             playlists.alb[id] = e.response
-            $('#audio_'+id).html(playlists.alb[id].length + ' аудио')
         }
     })
 }
@@ -118,25 +82,20 @@ function create_music(e){
     for (var j in e) {
         get_offset++;
         if (e[j].aid != null && e[j].content_restricted !== 1) {
-            $('#list_music').append('<div onmouseover="getdrag('+e[j].aid+')" id="'+ e[j].aid +'" class="item" data-src="' + e[j].url + '" data-title="' + e[j].title + '" data-artist="' + e[j].artist + '" data-duration="' + e[j].duration + '"><div class="item-container"><div class="item_icon"><i class="material-icons">music_note</i></div><div class="item_content"><h2 class="item_title">' + e[j].title + '</h2><h3 class="item_subtitle">'+ e[j].artist +'</h3></div></div><div class="item-buttons"><i class="material-icons">more_vert</i></div><div class="drop"><a target="_blank" class="material-icons icons" href="'+ e[j].url+'" download="'+ e[j].artist +' - '+ e[j].title + '.mp3.mp3" title="Скачать">file_download</a><a onclick="$(this).parent().parent().remove()" class="material-icons icons" title="Удалить">clear</a></div></div>')
+            $('#list_music').append('<div class="item" data-src="' + e[j].url + '" data-title="' + e[j].title + '" data-artist="' + e[j].artist + '" data-duration="' + e[j].duration + '"><div class="item-container"><div class="item_icon"><i class="material-icons">music_note</i></div><div class="item_content"><h2 class="item_title">' + e[j].title + '</h2><h3 class="item_subtitle">'+ e[j].artist +'</h3></div></div></div>')
         }
     }
     $('.item-container').click(function(e) { //Песня на клик
         $(this).parent('.item').addClass('-selected').siblings().removeClass('-selected');
         audiocont.ClickedItem()
     })
-    $('.item-buttons').click(function(e){
-        $('.drop.is-active').removeClass('is-active')
-        $('.material-icons.rot').removeClass('rot')
-        $(this).children('.material-icons').toggleClass('rot')
-        $(this).parent().children('.drop').toggleClass('is-active')
-        $(this).parent().children('.drop').mouseleave(function(){
-            $('.drop.is-active').removeClass('is-active')
-            $('.material-icons.rot').removeClass('rot')
-        })
-    })
     var el = document.getElementById('list_music');
-    var sortable = Sortable.create(el);
+    var sortable = Sortable.create(el, {
+        animation: 200,
+        setData: function (dataTransfer, dragEl){
+            dataTransfer.setData("DownloadURL","application/octet-stream:"+dragEl.getAttribute("data-artist")+" - "+dragEl.getAttribute("data-title")+".mp3:"+dragEl.getAttribute("data-src"));
+        }
+    });
     if(enable){
         audio()
     }
@@ -159,9 +118,24 @@ function playlist_list(){ //показать плейлисты
     $('#Playlists').animate({left: '0%', opacity: 1}, 500);
     $('#Music').animate({opacity: 0}, 500);
 }
-function getdrag(id) {
-  var track = document.getElementById(id)
-  track.addEventListener("dragstart",function(evt){
-    evt.dataTransfer.setData("DownloadURL","application/octet-stream:"+track.getAttribute("data-artist")+" - "+track.getAttribute("data-title")+".mp3:"+track.getAttribute("data-src"));
-  },false);
-}
+
+$.fn.shuffle = function() {
+    
+           var allElems = this.get(),
+               getRandom = function(max) {
+                   return Math.floor(Math.random() * max);
+               },
+               shuffled = $.map(allElems, function(){
+                   var random = getRandom(allElems.length),
+                       randEl = $(allElems[random]).clone(true)[0];
+                   allElems.splice(random, 1);
+                   return randEl;
+              });
+    
+           this.each(function(i){
+               $(this).replaceWith($(shuffled[i]));
+           });
+    
+           return $(shuffled);
+    
+       };

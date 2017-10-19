@@ -1,0 +1,29 @@
+{
+  "name": "musician",
+  "version": "1.0.0",
+  "description": "Standalone music player for VK",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uenify/musician.git"
+  },
+  "keywords": [
+    "VKAPI",
+    "Vk",
+    "music",
+    "player",
+    "electron"
+  ],
+  "author": "Uenify",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/uenify/musician/issues"
+  },
+  "homepage": "https://github.com/uenify/musician#readme",
+  "dependencies": {
+    "electron": "^1.6.10"
+  }
+}

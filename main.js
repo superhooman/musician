@@ -1,11 +1,11 @@
-const {app, BrowserWindow} = require('electron');
+const {app, BrowserWindow, globalShortcut} = require('electron');
 const path = require('path');
 const url = require('url');
 
 let mainWindow;
 
 function createWindow(){ //создаем окно
-  mainWindow = new BrowserWindow({width: 350, height: 650, resizable: true, titleBarStyle: "hidden", vibrancy: 'ultra-dark', minWidth: 320, minHeight: 450, maxWidth: 549})
+  mainWindow = new BrowserWindow({width: 350, height: 650, resizable: true, titleBarStyle: "hidden", minWidth: 320, minHeight: 450})
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
@@ -17,7 +17,12 @@ function createWindow(){ //создаем окно
   })
 }
 
-app.on('ready', createWindow)
+app.on('ready', () => {
+  createWindow()
+  globalShortcut.register('MediaPlayPause', () => mainWindow.webContents.send('ping', 'control:playPause'))
+	globalShortcut.register('MediaNextTrack', () => mainWindow.webContents.send('ping', 'control:nextTrack'))
+	globalShortcut.register('MediaPreviousTrack', () => mainWindow.webContents.send('ping', 'control:prevTrack'))
+} )
 
 // Когда на макоси закрывают все окна
 // Это понадобится в будущем, а пока что просто выход

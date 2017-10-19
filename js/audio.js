@@ -57,14 +57,16 @@
       // The default markup and classes for creating the player:
       createPlayer: {
         markup: '\
-        <div class="scrubber"> \
+        <div title="1" class="scrubber"> \
           <div class="progress"></div> \
           <div class="loaded"></div> \
         </div> \
         <div class="btns"> \
-          <div class="control-btn" id="prev"><i class="material-icons">skip_previous</i></div> \
           <div class="play-pause"><i class="btn-play-pause material-icons">play_circle_outline</i></div> \
-          <div class="control-btn" id="next"><i class="material-icons">skip_next</i></div> \
+          <div class="control-btn" title="Предыдущий" id="prev"><i class="material-icons">skip_previous</i></div> \
+          <div class="control-btn" title="Следующий" id="next"><i class="material-icons">skip_next</i></div> \
+          <div class="control-btn" title="Перемещать" id="shuffle" onclick="$(\'.item\').shuffle()"><i class="material-icons">shuffle</i></div> \
+          <div class="control-btn" title="Повтор" id="loop"><i class="material-icons">loop</i></div> \
         </div> \
         <div class="time"> \
           <span class="played">00:00</span><strong class="duration">00:00</strong> \
@@ -105,6 +107,22 @@
       init: function() {
         var player = this.settings.createPlayer;
         container[audiojs].helpers.addClass(this.wrapper, player.loadingClass);
+        tippy('.control-btn', {
+          delay: 1000,
+          arrow: true,
+          size: 'small'
+        })
+        tippy('.scrubber', {
+          arrow: true,
+          duration: 0,
+          animateFill: false,
+          flipDuration: 0,
+          stickyDuration: 0,
+          followCursor: true,
+          arrowSize: 'small',
+          dynamicTitle: true,
+          size: 'small'
+        })
       },
       loadStarted: function() {
         var player = this.settings.createPlayer,
@@ -258,10 +276,22 @@
       container[audiojs].events.addListener(playPause, 'click', function(e) {
         audio.playPause.apply(audio);
       });
-
-      container[audiojs].events.addListener(scrubber, 'click', function(e) {
+      var down
+      $('.scrubber').mousedown(function() {
+        down = true;
+      }).mouseup(function() {
+        down = false;  
+      });
+      container[audiojs].events.addListener(scrubber, 'mousemove', function(e) {
         var relativeLeft = e.clientX - leftPos(this);
-        audio.skipTo(relativeLeft / scrubber.offsetWidth);
+        document.querySelector('.scrubber').setAttribute('title', sec2time(Math.floor((relativeLeft / scrubber.offsetWidth)*audio.duration)))
+        if(down){
+          audio.skipTo(relativeLeft / scrubber.offsetWidth);
+        }
+      });
+      container[audiojs].events.addListener(scrubber, 'mousedown', function(e) {
+          var relativeLeft = e.clientX - leftPos(this);
+          audio.skipTo(relativeLeft / scrubber.offsetWidth);
       });
 
       // _If flash is being used, then the following handlers don't need to be registered._

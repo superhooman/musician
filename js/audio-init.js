@@ -58,6 +58,15 @@ function audio() {
         }
     }
     //Управление на клавиши
+    require('electron').ipcRenderer.on('ping', (event, message) => {
+        switch (message){
+            case 'control:playPause': audio.playPause();
+                break
+            case 'control:nextTrack': nexttrack();
+                break
+            case 'control:prevTrack': prevtrack();
+        }
+    })
     $(document).keydown(function(e) {
         var unicode = e.charCode ? e.charCode : e.keyCode;
         if (unicode == 39) {
@@ -87,12 +96,12 @@ function audio() {
     })
     //Луп кнопочка и ее цвет
     $('#loop').click(function(e) {
-        if (loop === 0){
+        if (!loop){
                 loop = 1
-                $( "#loop" ).fadeTo( "fast" , 1);
+                $( "#loop" ).addClass('active');
             }else{
                 loop = 0
-                $( "#loop" ).fadeTo( "fast" , 0.5);
+                $( "#loop" ).removeClass('active');
             }
     })
 

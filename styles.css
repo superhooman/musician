@@ -3,7 +3,8 @@ body {
     height: 100%!important;
     width: 100%!important;
     margin: 0;
-    background-color: rgba(22,27,49,0.2);
+    background-color: #fff;
+    user-select: none;
 }
 *::selection {
     background: transparent;
@@ -29,31 +30,32 @@ body {
     /*background: white;*/
 }
 .login_logo {
-    background: linear-gradient(135deg, #626dff 0%,#d966b0 100%);
+    background: #33C3F0;
     -webkit-app-region: drag;
 }
 .login_title {
     position: relative;
     width: 100%;
-    color: white;
+    color: #606c76;
     top: 50%;
     transform: translateY(-50%);
     text-align: center;
 }
 h1 {
     font-size: 50px;
-    font-weight: 100;
+    font-weight: 500;
     margin: 0;
 }
 h5 {
     font-weight: 300;
     white-space: nowrap;
     font-size: 16px;
-    color: #ccc;
+    color: #606c76;
     margin: 12px;
 }
 .login_main {
     position: absolute;
+    background: white;
 }
 .login_footer {
     position: absolute;
@@ -69,7 +71,7 @@ h5 {
     margin-right: auto;
 }
 #login_button {
-    color: #d04cfd;
+    color: #33C3F0;
     cursor: pointer;
 }
 #logo {
@@ -110,19 +112,17 @@ h5 {
     width: 150px;
     margin: 20px;
 }
-}.screen_header {
+}
+.screen_header {
     height: 56px;
     position: fixed;
     z-index: 2;
-    background: linear-gradient(rgba(22,27,49,0.5) 0%,transparent 100%);
     width: calc(100% - 40px);
     top: 0;
     padding: 40px 20px 20px 20px;
-    user-select: none;
 }
 #title-pl{
-  margin-left: 30px;
-  max-width: calc(100% - 30px);
+  max-width: 100%;
 }
 #back-btn{
   position: absolute;
@@ -142,7 +142,7 @@ h5 {
 .screen_title {
     display: inline-block;
     overflow: hidden;
-    color: white;
+    color: black;
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 100%;
@@ -167,11 +167,10 @@ h5 {
     justify-content: space-around;
     padding-bottom: 20px;
 }
-.list {
+#list_cont {
     overflow-y: auto;
-    height: calc(100% - 265px);
-    padding-top: 145px;
-    padding-bottom: 120px;
+    height: calc(100% - 196px);
+    margin-top: 116px;
 }
 .item-pl {
     position: relative;
@@ -202,11 +201,10 @@ h5 {
 }
 .item {
     transition: 0.2s;
-    color: rgba(255, 255, 255, .5);
-    margin-right: 10px;
-    margin-left: 10px;
-    border-radius: 6px;
-    margin-bottom: 10px;
+    color: #606c76;
+}
+.item:active{
+    cursor: grabbing;
 }
 .item-container{
     padding: 16px 32px 16px 32px;
@@ -242,7 +240,7 @@ h5 {
     border-radius: 4px;
     position: relative;
 }
-.drop>.icons{
+.tooltiptext>.icons{
     display: inline-block;
     text-decoration: none;
     color: rgba(255, 255, 255, .6);
@@ -255,22 +253,58 @@ h5 {
     cursor: pointer;
     color: rgba(255, 255, 255, .9);
 }
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -20px;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+}
+
+.tooltip.is-active>.tooltiptext{
+    visibility: visible;
+}
 .item:hover {
     background: rgba(0, 0, 0, .1);
 }
-.item:active {
+/*.item:active {
   opacity: 0.1;
     background: rgba(0, 0, 0, .2);
     color: rgba(255, 255, 255, .9);
-}
+}*/
 .item_icon {
     display: inline-block;
 }
+.-selected>.item-container>.item_icon>.material-icons{
+    color: white!important;
+}
 .item_icon>.material-icons {
     font-size: 30px;
-    background: linear-gradient(135deg, #626dff 0%,#d966b0 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #33C3F0;
 }
 .item_content {
     display: inline-block;
@@ -303,7 +337,6 @@ h5 {
     font-size: 12px;
 }
 #Music {
-    opacity: 0;
     z-index: 19;
 }
 #Playlists {
@@ -311,9 +344,8 @@ h5 {
     left: 100%;
 }
 .-selected {
-    background: #242c46!important;
+    background: #33C3F0!important;
     color: white;
-    box-shadow: 0px 0px 50px 0px rgba(0,0,0,0.4);
 }
 .-selected>.item-container{
     padding: 32px;
@@ -323,7 +355,6 @@ h5 {
     height: 80px;
     width: 100%;
     bottom: 0;
-    background: rgba(22,27,49,0.5);
 }
 .sortable-chosen {
     background: rgba(0, 0, 0, 0.5);
@@ -350,19 +381,18 @@ h5 {
 }
 .scrubber{
   height: 8px;
+  background: #eee;
 }
 .progress{
   height: 8px;
-  background: linear-gradient(135deg, #626dff 0%,#d966b0 100%);
-  border-bottom-right-radius: 4px;
-    border-top-right-radius: 4px;
+  background: #33C3F0;
+  cursor: pointer;
+  position: absolute;
 }
 .loaded{
-  position: absolute;
   height: 8px;
   margin-top: -8px;
-  background: linear-gradient(to right,rgba(0,0,0,0.2) 95%, transparent 100%);
-  z-index: -2;
+  background: rgba(0, 0, 0, .1);
 }
 .play-pause{
   margin-top: 10px;
@@ -370,37 +400,31 @@ h5 {
 .play-pause> i{
   font-size: 48px;
   cursor: pointer;
-  background: linear-gradient(135deg, #626dff 0%,#d966b0 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  opacity: 0.6;
+  color: #33C3F0;
   transition: 0.2s;
 }
 .play-pause:hover> i{
-    opacity: 1;
+    opacity: 0.6;
 }
 .control-btn{
-  font-size: 36px;
-  
+    font-size: 36px;
+    height: 24px;
+    margin-top: 22px;
+    width: 24px;
 }
 .control-btn:hover>i{
-    opacity: 1;
+    opacity: 0.6;
 }
 .control-btn> i{
-  transform: translateY(50%);
+  display: block;
   cursor: pointer;
-  background: linear-gradient(135deg, #626dff 0%,#d966b0 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  opacity: 0.6;
+    color: #33C3F0;
   transition: 0.2s;
 }
 .btns{
-  position: absolute;
-  display: flex;
-  width: 96px;
-  left: 50%;
-  margin-left: -48px;
+    display: flex;
+    margin-left: 20px;
+    margin-top: 5px;
 }
 .time{
     color: rgba(255,255,255,0.8);
@@ -409,6 +433,9 @@ h5 {
 }
 .time>span{
     float: left;
+}
+#loop.active{
+    text-shadow: 0 0 10px rgba(51,195,240,0.5);
 }
 .time>strong{
     float: right;
