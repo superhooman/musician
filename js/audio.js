@@ -58,8 +58,9 @@
       createPlayer: {
         markup: '\
         <div title="1" class="scrubber"> \
-          <div class="progress"></div> \
+          <div class="progress"><div class="dot"></div></div> \
           <div class="loaded"></div> \
+          <div class="back"></div> \
         </div> \
         <div class="btns"> \
           <div class="play-pause"><i class="btn-play-pause material-icons">play_circle_outline</i></div> \
@@ -121,6 +122,7 @@
           followCursor: true,
           arrowSize: 'small',
           dynamicTitle: true,
+          hideOnClick: false,
           size: 'small'
         })
       },
@@ -280,6 +282,8 @@
       $('.scrubber').mousedown(function() {
         down = true;
       }).mouseup(function() {
+        down = false;  
+      }).mouseleave(function() {
         down = false;  
       });
       container[audiojs].events.addListener(scrubber, 'mousemove', function(e) {
