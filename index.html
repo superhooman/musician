@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>Musician</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="tippy.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+    <script>if (typeof module === 'object') { window.module = module; module = undefined; }</script>
     <!-- Импорт скриптов. Electron ругается на jquery  -->
     <script src="js/sortable.min.js"></script>
     <script src="js/jquery.min.js"></script>
@@ -15,35 +15,79 @@
     <!-- Импорт закончен -->
     <script>if (window.module) module = window.module;</script>
     <script src="js/audio-init.js"></script>
-  <body>
-    <div id="titlebar" class="draggable"></div>
-    <div id="splash" class="screen">
-        <div class="login_logo"><div id="logo"></div></div>
-        <div class="login_main">
-            <div class="login_title"><h1>Musician</h1><h5> Быстрый. Удобный. Красивый</h5><div id="login_wrapper"><i id="login_button"  class="material-icons">arrow_forward</i></div></div>
-            <div class="login_footer">
-                <a data-href="https://vk.com/join" class="login_footer_link">Зарегистрироваться</a>
-                <span class="login_footer_bullet">•</span>
-                <a data-href="https://vk.com/restore" class="login_footer_link">Забыли пароль?</a>
+
+    <body>
+        <div id="titlebar" class="draggable"></div>
+        <div id="splash" class="screen">
+            <div class="login_logo">
+                <div id="logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 76 76" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <defs>
+                          <linearGradient id="d" x1="50%" x2="50%" y1="0%" y2="100%">
+                            <stop stop-color="#FFFFFF" offset="0%"/>
+                            <stop stop-color="#ECF2F7" offset="100%"/>
+                          </linearGradient>
+                          <path id="c" d="M12.5,0l-6,1.1C6.2,1.2,6,1.4,6,1.7V4v0.6v9C5.4,13.2,4.7,13,4,13c-2.2,0-4,1.8-4,4c0,2.2,1.8,4,4,4s4-1.8,4-4
+                          c0,0,0,0,0,0c0,0,0,0,0,0V4.7l4.5-0.8C12.8,3.8,13,3.6,13,3.3V0.4C13,0.1,12.8,0,12.5,0z" style="transform: translate(25px, 17px) scale(2);"/>
+                          <filter id="b" width="200%" height="200%" x="-50%" y="-50%" filterUnits="objectBoundingBox">
+                            <feOffset dy="2" in="SourceAlpha" result="shadowOffsetOuter1"/>
+                            <feGaussianBlur stdDeviation="1.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"/>
+                            <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.06 0" in="shadowBlurOuter1"/>
+                          </filter>
+                          <filter id="e" width="200%" height="200%" x="-50%" y="-50%" filterUnits="objectBoundingBox">
+                            <feMorphology radius="2" in="SourceAlpha" result="shadowSpreadInner1"/>
+                            <feGaussianBlur stdDeviation="1" in="shadowSpreadInner1" result="shadowBlurInner1"/>
+                            <feOffset in="shadowBlurInner1" result="shadowOffsetInner1"/>
+                            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"/>
+                            <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0" in="shadowInnerInner1"/>
+                          </filter>
+                        </defs>
+                        <g fill="none" fill-rule="evenodd">
+                          <use fill="black" filter="url(#b)" xlink:href="#c"/>
+                          <use fill="url(#d)" xlink:href="#c"/>
+                          <use fill="black" filter="url(#e)" xlink:href="#c"/>
+                        </g>
+                      </svg>
+                      
+                </div>
+            </div>
+            <div class="login_main">
+                <div class="login_title">
+                    <h1>Musician</h1>
+                    <h5> Быстрый. Удобный. Красивый</h5>
+                    <div id="login_wrapper">
+                        <i class="button" id="login_button" onclick="login_window('login')">Войти</i>
+                    </div>
+                </div>
+                <div class="login_footer">
+                    <a data-href="https://vk.com/join" class="login_footer_link">Зарегистрироваться</a>
+                    <span class="login_footer_bullet">•</span>
+                    <a data-href="https://vk.com/restore" class="login_footer_link">Забыли пароль?</a>
+                </div>
             </div>
         </div>
-    </div>
-    <div id="Music" class="screen">
-        <div class="screen_header draggable">
-            <h1 id="title-pl" class="screen_title">Основной плейлист</h1>
-        </div>
-        <div id="list_cont">
-            <div id="list_music" class="list">
+        <div id="Music" class="screen">
+            <div id="controls">
+                <audio preload=""></audio>
             </div>
+            <div id="list_cont">
+                <div id="list_music" class="list">
+                </div>
+            </div>
+
         </div>
-        <div id="controls"><audio preload=""></audio></div>
-    </div>
-  </body>
-  <script>
-    const {webFrame} = require('electron')
-    webFrame.setZoomLevelLimits(1, 1)
-  </script>
-  <script src="js/login-init.js"></script>
-  <script src="js/tippy.min.js"></script>
-  <script src="js/player-core.js"></script>
+        <div id="message">
+            <div class="bg" onclick="hidemessage()"></div>
+            <div class="message"></div>
+        </div>
+        
+    </body>
+    <script>
+            const { webFrame } = require('electron')
+            webFrame.setZoomLevelLimits(1, 1)
+    </script>
+    <script src="js/login-init.js"></script>
+    <script src="js/tippy.min.js"></script>
+    <script src="js/player-core.js"></script>
+
 </html>

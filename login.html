@@ -1,35 +1,39 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>ВКонтакте | Вход</title>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-        <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
-        <!-- normal script imports etc  -->
-        <script src="js/jquery.min.js"></script>
-        <!-- Insert this line after script imports -->
-        <script>if (window.module) module = window.module;</script>
-    </head>
-    <style>
-        html{
-            height: 100%;
-            width: 100%;
-        }
-        body{
-            margin: 0;
-            height: 100%;
-            width: 100%;
-        }
-        #login-form{
-            width: 100%;
-            height: 100%;
-        }
-    </style>
-    <body>
-        <webview id="login-form"></webview>
-    </body>
-    <script>
+
+<head>
+    <meta charset="UTF-8">
+    <title>ВКонтакте | Вход</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script>if (typeof module === 'object') { window.module = module; module = undefined; }</script>
+    <!-- normal script imports etc  -->
+    <script src="js/jquery.min.js"></script>
+    <!-- Insert this line after script imports -->
+    <script>if (window.module) module = window.module;</script>
+</head>
+<style>
+    html {
+        height: 100%;
+        width: 100%;
+    }
+
+    body {
+        margin: 0;
+        height: 100%;
+        width: 100%;
+    }
+
+    #login-form {
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<body>
+    <webview id="login-form"></webview>
+</body>
+<script>
             const ipc = require('electron').ipcRenderer
             const BrowserWindow = require('electron').remote.BrowserWindow
             var fromwin = BrowserWindow.fromId(1);
@@ -39,11 +43,14 @@
             const check = () => {
                 url = document.getElementById('login-form').getURL()
                 var urlcheck = url.split('#')
-                if (urlcheck[0] == 'https://oauth.vk.com/blank.html'){
+                if (urlcheck[0] == 'https://oauth.vk.com/blank.html') {
                     fromwin.webContents.send('success', url)
-                    window.close()
+                    window.session.clearStorageData([], function (data) {
+                        console.log(data);
+                    })
                 }
             }
             document.getElementById('login-form').addEventListener('did-stop-loading', check)
-    </script>
+</script>
+
 </html>

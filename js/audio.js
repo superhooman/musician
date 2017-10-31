@@ -3,11 +3,11 @@
   // Use the path to the audio.js file to create relative paths to the swf and player graphics
   // Remember that some systems (e.g. ruby on rails) append strings like '?1301478336' to asset paths
   var path = (function() {
-    var re = new RegExp('audio(\.min)?\.js.*'),
-        scripts = document.getElementsByTagName('script');
+    var re = new RegExp("audio(.min)?.js.*"),
+      scripts = document.getElementsByTagName("script");
     for (var i = 0, ii = scripts.length; i < ii; i++) {
-      var path = scripts[i].getAttribute('src');
-      if(re.test(path)) return path.replace(re, '');
+      var path = scripts[i].getAttribute("src");
+      if (re.test(path)) return path.replace(re, "");
     }
   })();
 
@@ -21,11 +21,16 @@
     // `$1` The name of the flash movie
     // `$2` The path to the swf
     // `$3` Cache invalidation
-    flashSource: '\
+    flashSource:
+      '\
       <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" id="$1" width="1" height="1" name="$1" style="position: absolute; left: -1px;"> \
-        <param name="movie" value="$2?playerInstance='+audiojs+'.instances[\'$1\']&datetime=$3"> \
+        <param name="movie" value="$2?playerInstance=' +
+      audiojs +
+      '.instances[\'$1\']&datetime=$3"> \
         <param name="allowscriptaccess" value="always"> \
-        <embed name="$1" src="$2?playerInstance='+audiojs+'.instances[\'$1\']&datetime=$3" width="1" height="1" allowscriptaccess="always"> \
+        <embed name="$1" src="$2?playerInstance=' +
+      audiojs +
+      '.instances[\'$1\']&datetime=$3" width="1" height="1" allowscriptaccess="always"> \
       </object>',
 
     // ### The main settings object
@@ -34,21 +39,27 @@
       autoplay: false,
       loop: false,
       preload: true,
-      imageLocation: path + 'player-graphics.gif',
-      swfLocation: path + 'audiojs.swf',
+      imageLocation: path + "player-graphics.gif",
+      swfLocation: path + "audiojs.swf",
       useFlash: (function() {
-        var a = document.createElement('audio');
-        return !(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''));
+        var a = document.createElement("audio");
+        return !(
+          a.canPlayType && a.canPlayType("audio/mpeg;").replace(/no/, "")
+        );
       })(),
       hasFlash: (function() {
-        if (navigator.plugins && navigator.plugins.length && navigator.plugins['Shockwave Flash']) {
+        if (
+          navigator.plugins &&
+          navigator.plugins.length &&
+          navigator.plugins["Shockwave Flash"]
+        ) {
           return true;
         } else if (navigator.mimeTypes && navigator.mimeTypes.length) {
-          var mimeType = navigator.mimeTypes['application/x-shockwave-flash'];
+          var mimeType = navigator.mimeTypes["application/x-shockwave-flash"];
           return mimeType && mimeType.enabledPlugin;
         } else {
           try {
-            var ax = new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+            var ax = new ActiveXObject("ShockwaveFlash.ShockwaveFlash");
             return true;
           } catch (e) {}
         }
@@ -56,89 +67,114 @@
       })(),
       // The default markup and classes for creating the player:
       createPlayer: {
-        markup: '\
+        markup:
+          '\
         <div title="1" class="scrubber"> \
           <div class="progress"><div class="dot"></div></div> \
           <div class="loaded"></div> \
           <div class="back"></div> \
         </div> \
-        <div class="btns"> \
-          <div class="play-pause"><i class="btn-play-pause material-icons">play_circle_outline</i></div> \
-          <div class="control-btn" title="Предыдущий" id="prev"><i class="material-icons">skip_previous</i></div> \
-          <div class="control-btn" title="Следующий" id="next"><i class="material-icons">skip_next</i></div> \
-          <div class="control-btn" title="Перемещать" id="shuffle" onclick="$(\'.item\').shuffle()"><i class="material-icons">shuffle</i></div> \
-          <div class="control-btn" title="Повтор" id="loop"><i class="material-icons">loop</i></div> \
-        </div> \
-        <div class="time"> \
-          <span class="played">00:00</span><strong class="duration">00:00</strong> \
-        </div> \
+        <div class="cover"></div> \
+        <div class="play-pause"><div class="icon"></div></div> \
+        <div class="control-btn" title="Предыдущий" id="prev"><div class="icon"></div></div> \
+        <div class="control-btn" title="Следующий" id="next"><div class="icon"></div></div> \
+        <div class="right-btns">\
+          <div class="right-btn" title="Перемещать" id="shuffle"><div class="icon"></div></div> \
+          <div class="right-btn" title="Повтор" id="loop"><div class="icon"></div></div> \
+          <div class="right-btn" title="Настройки" id="settings" tabindex="-1">\
+          <div id="popover">\
+            <div class="popover-item">Настройки</div>\
+            <div class="popover-item">О приложении</div>\
+            <div class="popover-item" onclick="login_window(\'logout\')">Выйти</div>\
+          </div>\
+          <div class="icon"></div></div>\
+        </div>\
+        <div class="text">\
+          <span class="title">\
+            <span id="artist"></span>\
+            <span id="title"></span>\
+          </span>\
+          <div class="time"> \
+            <span class="played">00:00</span> \
+          </div> \
+        </div>\
         <div class="error-message"></div>',
-        playPauseClass: 'play-pause',
-        scrubberClass: 'scrubber',
-        progressClass: 'progress',
-        loaderClass: 'loaded',
-        timeClass: 'time',
-        durationClass: 'duration',
-        playedClass: 'played',
-        errorMessageClass: 'error-message',
-        playingClass: 'playing',
-        loadingClass: 'loading',
-        errorClass: 'error'
+        playPauseClass: "play-pause",
+        scrubberClass: "scrubber",
+        progressClass: "progress",
+        loaderClass: "loaded",
+        timeClass: "time",
+        durationClass: "duration",
+        playedClass: "played",
+        errorMessageClass: "error-message",
+        playingClass: "playing",
+        loadingClass: "loading",
+        errorClass: "error"
       },
       // The css used by the default player. This is is dynamically injected into a `<style>` tag in the top of the head.
-      css: '',
+      css: "",
       // The default event callbacks:
       trackEnded: function(e) {},
       flashError: function() {
         var player = this.settings.createPlayer,
-            errorMessage = getByClass(player.errorMessageClass, this.wrapper),
-            html = 'Missing <a href="http://get.adobe.com/flashplayer/">flash player</a> plugin.';
-        if (this.mp3) html += ' <a href="'+this.mp3+'">Download audio file</a>.';
-        container[audiojs].helpers.removeClass(this.wrapper, player.loadingClass);
+          errorMessage = getByClass(player.errorMessageClass, this.wrapper),
+          html =
+            'Missing <a href="http://get.adobe.com/flashplayer/">flash player</a> plugin.';
+        if (this.mp3)
+          html += ' <a href="' + this.mp3 + '">Download audio file</a>.';
+        container[audiojs].helpers.removeClass(
+          this.wrapper,
+          player.loadingClass
+        );
         container[audiojs].helpers.addClass(this.wrapper, player.errorClass);
         errorMessage.innerHTML = html;
       },
       loadError: function(e) {
         var player = this.settings.createPlayer,
-            errorMessage = getByClass(player.errorMessageClass, this.wrapper);
-        container[audiojs].helpers.removeClass(this.wrapper, player.loadingClass);
+          errorMessage = getByClass(player.errorMessageClass, this.wrapper);
+        container[audiojs].helpers.removeClass(
+          this.wrapper,
+          player.loadingClass
+        );
         container[audiojs].helpers.addClass(this.wrapper, player.errorClass);
-        errorMessage.innerHTML = 'Error loading: "'+this.mp3+'"';
+        errorMessage.innerHTML = 'Error loading: "' + this.mp3 + '"';
       },
       init: function() {
         var player = this.settings.createPlayer;
         container[audiojs].helpers.addClass(this.wrapper, player.loadingClass);
-        tippy('.control-btn', {
+        tippy(".control-btn", {
           delay: 1000,
           arrow: true,
-          size: 'small'
-        })
-        tippy('.scrubber', {
+          size: "small"
+        });
+        tippy(".scrubber", {
           arrow: true,
           duration: 0,
           animateFill: false,
           flipDuration: 0,
           stickyDuration: 0,
           followCursor: true,
-          arrowSize: 'small',
+          arrowSize: "small",
           dynamicTitle: true,
           hideOnClick: false,
-          size: 'small'
-        })
+          size: "small"
+        });
       },
       loadStarted: function() {
         var player = this.settings.createPlayer,
-            duration = getByClass(player.durationClass, this.wrapper),
-            m = Math.floor(this.duration / 60),
-            s = Math.floor(this.duration % 60);
-        container[audiojs].helpers.removeClass(this.wrapper, player.loadingClass);
-        duration.innerHTML = ((m<10?'0':'')+m+':'+(s<10?'0':'')+s);
+          duration = getByClass(player.durationClass, this.wrapper),
+          m = Math.floor(this.duration / 60),
+          s = Math.floor(this.duration % 60);
+        container[audiojs].helpers.removeClass(
+          this.wrapper,
+          player.loadingClass
+        );
       },
       loadProgress: function(percent) {
         var player = this.settings.createPlayer,
-            scrubber = getByClass(player.scrubberClass, this.wrapper),
-            loaded = getByClass(player.loaderClass, this.wrapper);
-        loaded.style.width = (percent * 100) + '%';
+          scrubber = getByClass(player.scrubberClass, this.wrapper),
+          loaded = getByClass(player.loaderClass, this.wrapper);
+        loaded.style.width = percent * 100 + "%";
       },
       playPause: function() {
         if (this.playing) this.settings.play();
@@ -146,24 +182,29 @@
       },
       play: function() {
         var player = this.settings.createPlayer;
-        $('.btn-play-pause').html('pause_circle_outline')
+        $(".play-pause").addClass("play");
+        $("#list_music").addClass("play");
         container[audiojs].helpers.addClass(this.wrapper, player.playingClass);
       },
       pause: function() {
         var player = this.settings.createPlayer;
-        container[audiojs].helpers.removeClass(this.wrapper, player.playingClass);
+        container[audiojs].helpers.removeClass(
+          this.wrapper,
+          player.playingClass
+        );
       },
       updatePlayhead: function(percent) {
         var player = this.settings.createPlayer,
-            scrubber = getByClass(player.scrubberClass, this.wrapper),
-            progress = getByClass(player.progressClass, this.wrapper);
-        progress.style.width = (percent * 100) + '%';
+          scrubber = getByClass(player.scrubberClass, this.wrapper),
+          progress = getByClass(player.progressClass, this.wrapper);
+        progress.style.width = percent * 100 + "%";
 
         var played = getByClass(player.playedClass, this.wrapper),
-            p = this.duration * percent,
-            m = Math.floor(p / 60),
-            s = Math.floor(p % 60);
-        played.innerHTML = ((m<10?'0':'')+m+':'+(s<10?'0':'')+s);
+          p = this.duration * percent,
+          m = Math.floor(p / 60),
+          s = Math.floor(p % 60);
+        played.innerHTML =
+          (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
       }
     },
 
@@ -174,7 +215,7 @@
     // If an array is passed then it calls back to `createAll()`.
     // Otherwise, it creates a single instance and returns it.
     create: function(element, options) {
-      var options = options || {}
+      var options = options || {};
       if (element.length) {
         return this.createAll(options, element);
       } else {
@@ -186,9 +227,9 @@
     // Creates multiple `audiojs` instances.
     // If `elements` is `null`, then automatically find any `<audio>` tags on the page and create `audiojs` instances for them.
     createAll: function(options, elements) {
-      var audioElements = elements || document.getElementsByTagName('audio'),
-          instances = []
-          options = options || {};
+      var audioElements = elements || document.getElementsByTagName("audio"),
+        instances = [];
+      options = options || {};
       for (var i = 0, ii = audioElements.length; i < ii; i++) {
         instances.push(this.newInstance(audioElements[i], options));
       }
@@ -199,21 +240,22 @@
     // This goes through all the steps required to build out a usable `audiojs` instance.
     newInstance: function(element, options) {
       var element = element,
-          s = this.helpers.clone(this.settings),
-          id = 'audiojs'+this.instanceCount,
-          wrapperId = 'audiojs_wrapper'+this.instanceCount,
-          instanceCount = this.instanceCount++;
+        s = this.helpers.clone(this.settings),
+        id = "audiojs" + this.instanceCount,
+        wrapperId = "audiojs_wrapper" + this.instanceCount,
+        instanceCount = this.instanceCount++;
 
       // Check for `autoplay`, `loop` and `preload` attributes and write them into the settings.
-      if (element.getAttribute('autoplay') != null) s.autoplay = true;
-      if (element.getAttribute('loop') != null) s.loop = true;
-      if (element.getAttribute('preload') == 'none') s.preload = false;
+      if (element.getAttribute("autoplay") != null) s.autoplay = true;
+      if (element.getAttribute("loop") != null) s.loop = true;
+      if (element.getAttribute("preload") == "none") s.preload = false;
       // Merge the default settings with the user-defined `options`.
       if (options) this.helpers.merge(s, options);
 
       // Inject the player html if required.
-      if (s.createPlayer.markup) element = this.createPlayer(element, s.createPlayer, wrapperId);
-      else element.parentNode.setAttribute('id', wrapperId);
+      if (s.createPlayer.markup)
+        element = this.createPlayer(element, s.createPlayer, wrapperId);
+      else element.parentNode.setAttribute("id", wrapperId);
 
       // Return a new `audiojs` instance.
       var audio = new container[audiojsInstance](element, s);
@@ -230,7 +272,8 @@
       }
 
       // Attach event callbacks to the new audiojs instance.
-      if (!s.useFlash || (s.useFlash && s.hasFlash)) this.attachEvents(audio.wrapper, audio);
+      if (!s.useFlash || (s.useFlash && s.hasFlash))
+        this.attachEvents(audio.wrapper, audio);
 
       // Store the newly-created `audiojs` instance.
       this.instances[id] = audio;
@@ -240,14 +283,17 @@
     // ### Helper methods for constructing a working player
     // Inject a wrapping div and the markup for the html player.
     createPlayer: function(element, player, id) {
-      var wrapper = document.createElement('div'),
-          newElement = element.cloneNode(true);
-      wrapper.setAttribute('class', 'audiojs');
-      wrapper.setAttribute('className', 'audiojs');
-      wrapper.setAttribute('id', id);
+      var wrapper = document.createElement("div"),
+        newElement = element.cloneNode(true);
+      wrapper.setAttribute("class", "audiojs");
+      wrapper.setAttribute("className", "audiojs");
+      wrapper.setAttribute("id", id);
 
       // Fix IE's broken implementation of `innerHTML` & `cloneNode` for HTML5 elements.
-      if (newElement.outerHTML && !document.createElement('audio').canPlayType) {
+      if (
+        newElement.outerHTML &&
+        !document.createElement("audio").canPlayType
+      ) {
         newElement = this.helpers.cloneHtml5Node(element);
         wrapper.innerHTML = player.markup;
         wrapper.appendChild(newElement);
@@ -258,44 +304,56 @@
         wrapper.innerHTML = wrapper.innerHTML + player.markup;
         element.parentNode.replaceChild(wrapper, element);
       }
-      return wrapper.getElementsByTagName('audio')[0];
+      return wrapper.getElementsByTagName("audio")[0];
     },
 
     // Attaches useful event callbacks to an `audiojs` instance.
     attachEvents: function(wrapper, audio) {
       if (!audio.settings.createPlayer) return;
       var player = audio.settings.createPlayer,
-          playPause = getByClass(player.playPauseClass, wrapper),
-          scrubber = getByClass(player.scrubberClass, wrapper),
-          leftPos = function(elem) {
-            var curleft = 0;
-            if (elem.offsetParent) {
-              do { curleft += elem.offsetLeft; } while (elem = elem.offsetParent);
-            }
-            return curleft;
-          };
+        playPause = getByClass(player.playPauseClass, wrapper),
+        scrubber = getByClass(player.scrubberClass, wrapper),
+        leftPos = function(elem) {
+          var curleft = 0;
+          if (elem.offsetParent) {
+            do {
+              curleft += elem.offsetLeft;
+            } while ((elem = elem.offsetParent));
+          }
+          return curleft;
+        };
 
-      container[audiojs].events.addListener(playPause, 'click', function(e) {
+      container[audiojs].events.addListener(playPause, "click", function(e) {
         audio.playPause.apply(audio);
       });
-      var down
-      $('.scrubber').mousedown(function() {
-        down = true;
-      }).mouseup(function() {
-        down = false;  
-      }).mouseleave(function() {
-        down = false;  
-      });
-      container[audiojs].events.addListener(scrubber, 'mousemove', function(e) {
+      var down;
+      $(".scrubber")
+        .mousedown(function() {
+          down = true;
+        })
+        .mouseup(function() {
+          down = false;
+        })
+        .mouseleave(function() {
+          down = false;
+        });
+      container[audiojs].events.addListener(scrubber, "mousemove", function(e) {
         var relativeLeft = e.clientX - leftPos(this);
-        document.querySelector('.scrubber').setAttribute('title', sec2time(Math.floor((relativeLeft / scrubber.offsetWidth)*audio.duration)))
-        if(down){
+        document
+          .querySelector(".scrubber")
+          .setAttribute(
+            "title",
+            sec2time(
+              Math.floor(relativeLeft / scrubber.offsetWidth * audio.duration)
+            )
+          );
+        if (down) {
           audio.skipTo(relativeLeft / scrubber.offsetWidth);
         }
       });
-      container[audiojs].events.addListener(scrubber, 'mousedown', function(e) {
-          var relativeLeft = e.clientX - leftPos(this);
-          audio.skipTo(relativeLeft / scrubber.offsetWidth);
+      container[audiojs].events.addListener(scrubber, "mousedown", function(e) {
+        var relativeLeft = e.clientX - leftPos(this);
+        audio.skipTo(relativeLeft / scrubber.offsetWidth);
       });
 
       // _If flash is being used, then the following handlers don't need to be registered._
@@ -304,46 +362,51 @@
       // Start tracking the load progress of the track.
       container[audiojs].events.trackLoadProgress(audio);
 
-      container[audiojs].events.addListener(audio.element, 'timeupdate', function(e) {
-        audio.updatePlayhead.apply(audio);
-      });
+      container[audiojs].events.addListener(
+        audio.element,
+        "timeupdate",
+        function(e) {
+          audio.updatePlayhead.apply(audio);
+        }
+      );
 
-      container[audiojs].events.addListener(audio.element, 'ended', function(e) {
+      container[audiojs].events.addListener(audio.element, "ended", function(
+        e
+      ) {
         audio.trackEnded.apply(audio);
       });
 
-      container[audiojs].events.addListener(audio.source, 'error', function(e) {
+      container[audiojs].events.addListener(audio.source, "error", function(e) {
         // on error, cancel any load timers that are running.
         clearInterval(audio.readyTimer);
         clearInterval(audio.loadTimer);
         audio.settings.loadError.apply(audio);
       });
-
     },
 
     // Flash requires a slightly different API to the `<audio>` element, so this method is used to overwrite the standard event handlers.
     attachFlashEvents: function(element, audio) {
-      audio['swfReady'] = false;
-      audio['load'] = function(mp3) {
+      audio["swfReady"] = false;
+      audio["load"] = function(mp3) {
         // If the swf isn't ready yet then just set `audio.mp3`. `init()` will load it in once the swf is ready.
         audio.mp3 = mp3;
         if (audio.swfReady) audio.element.load(mp3);
-      }
-      audio['loadProgress'] = function(percent, duration) {
+      };
+      audio["loadProgress"] = function(percent, duration) {
         audio.loadedPercent = percent;
         audio.duration = duration;
         audio.settings.loadStarted.apply(audio);
         audio.settings.loadProgress.apply(audio, [percent]);
-      }
-      audio['skipTo'] = function(percent) {
+      };
+      audio["skipTo"] = function(percent) {
         if (percent > audio.loadedPercent) return;
-        audio.updatePlayhead.call(audio, [percent])
+        audio.updatePlayhead.call(audio, [percent]);
         audio.element.skipTo(percent);
-      }
-      audio['updatePlayhead'] = function(percent) {
+      };
+      audio["updatePlayhead"] = function(percent) {
         audio.settings.updatePlayhead.apply(audio, [percent]);
-      }
-      audio['play'] = function() {
+      };
+      audio["play"] = function() {
         // If the audio hasn't started preloading, then start it now.
         // Then set `preload` to `true`, so that any tracks loaded in subsequently are loaded straight away.
         if (!audio.settings.preload) {
@@ -355,22 +418,22 @@
         // <http://dev.nuclearrooster.com/2008/07/27/externalinterfaceaddcallback-can-cause-ie-js-errors-with-certain-keyworkds/>
         audio.element.pplay();
         audio.settings.play.apply(audio);
-      }
-      audio['pause'] = function() {
+      };
+      audio["pause"] = function() {
         audio.playing = false;
         // Use `ppause()` for consistency with `pplay()`, even though it isn't really required.
         audio.element.ppause();
         audio.settings.pause.apply(audio);
-      }
-      audio['setVolume'] = function(v) {
+      };
+      audio["setVolume"] = function(v) {
         audio.element.setVolume(v);
-      }
-      audio['loadStarted'] = function() {
+      };
+      audio["loadStarted"] = function() {
         // Load the mp3 specified by the audio element into the swf.
         audio.swfReady = true;
         if (audio.settings.preload) audio.element.init(audio.mp3);
         if (audio.settings.autoplay) audio.play.apply(audio);
-      }
+      };
     },
 
     // ### Injecting an swf from a string
@@ -379,10 +442,10 @@
       var flashSource = this.flashSource.replace(/\$1/g, id);
       flashSource = flashSource.replace(/\$2/g, audio.settings.swfLocation);
       // `(+new Date)` ensures the swf is not pulled out of cache. The fixes an issue with Firefox running multiple players on the same page.
-      flashSource = flashSource.replace(/\$3/g, (+new Date + Math.random()));
+      flashSource = flashSource.replace(/\$3/g, +new Date() + Math.random());
       // Inject the player markup using a more verbose `innerHTML` insertion technique that works with IE.
       var html = audio.wrapper.innerHTML,
-          div = document.createElement('div');
+        div = document.createElement("div");
       div.innerHTML = flashSource + html;
       audio.wrapper.innerHTML = div.innerHTML;
       audio.element = this.helpers.getSwf(id);
@@ -400,49 +463,48 @@
         }
       },
       // **Clone a javascript object (recursively)**
-      clone: function(obj){
-        if (obj == null || typeof(obj) !== 'object') return obj;
+      clone: function(obj) {
+        if (obj == null || typeof obj !== "object") return obj;
         var temp = new obj.constructor();
         for (var key in obj) temp[key] = arguments.callee(obj[key]);
         return temp;
       },
       // **Adding/removing classnames from elements**
       addClass: function(element, className) {
-        var re = new RegExp('(\\s|^)'+className+'(\\s|$)');
+        var re = new RegExp("(\\s|^)" + className + "(\\s|$)");
         if (re.test(element.className)) return;
-        element.className += ' ' + className;
+        element.className += " " + className;
       },
       removeClass: function(element, className) {
-        var re = new RegExp('(\\s|^)'+className+'(\\s|$)');
-        element.className = element.className.replace(re,' ');
+        var re = new RegExp("(\\s|^)" + className + "(\\s|$)");
+        element.className = element.className.replace(re, " ");
       },
       // **Dynamic CSS injection**
       // Takes a string of css, inserts it into a `<style>`, then injects it in at the very top of the `<head>`. This ensures any user-defined styles will take precedence.
       injectCss: function(audio, string) {
-
         // If an `audiojs` `<style>` tag already exists, then append to it rather than creating a whole new `<style>`.
-        var prepend = '',
-            styles = document.getElementsByTagName('style'),
-            css = string.replace(/\$1/g, audio.settings.imageLocation);
+        var prepend = "",
+          styles = document.getElementsByTagName("style"),
+          css = string.replace(/\$1/g, audio.settings.imageLocation);
 
         for (var i = 0, ii = styles.length; i < ii; i++) {
-          var title = styles[i].getAttribute('title');
-          if (title && ~title.indexOf('audiojs')) {
+          var title = styles[i].getAttribute("title");
+          if (title && ~title.indexOf("audiojs")) {
             style = styles[i];
             if (style.innerHTML === css) return;
             prepend = style.innerHTML;
             break;
           }
-        };
+        }
 
-        var head = document.getElementsByTagName('head')[0],
-            firstchild = head.firstChild,
-            style = document.createElement('style');
+        var head = document.getElementsByTagName("head")[0],
+          firstchild = head.firstChild,
+          style = document.createElement("style");
 
         if (!head) return;
 
-        style.setAttribute('type', 'text/css');
-        style.setAttribute('title', 'audiojs');
+        style.setAttribute("type", "text/css");
+        style.setAttribute("title", "audiojs");
 
         if (style.styleSheet) style.styleSheet.cssText = prepend + css;
         else style.appendChild(document.createTextNode(prepend + css));
@@ -454,9 +516,9 @@
       // Create a html5-safe document fragment by injecting an `<audio>` element into the document fragment.
       cloneHtml5Node: function(audioTag) {
         var fragment = document.createDocumentFragment(),
-            doc = fragment.createElement ? fragment : document;
-        doc.createElement('audio');
-        var div = doc.createElement('div');
+          doc = fragment.createElement ? fragment : document;
+        doc.createElement("audio");
+        var div = doc.createElement("div");
         fragment.appendChild(div);
         div.innerHTML = audioTag.outerHTML;
         return div.firstChild;
@@ -481,8 +543,8 @@
         } else if (element.attachEvent) {
           this.listeners.push(element);
           if (!this.memoryLeaking) {
-            window.attachEvent('onunload', function() {
-              if(this.listeners) {
+            window.attachEvent("onunload", function() {
+              if (this.listeners) {
                 for (var i = 0, ii = this.listeners.length; i < ii; i++) {
                   container[audiojs].events.purge(this.listeners[i]);
                 }
@@ -490,7 +552,7 @@
             });
             this.memoryLeaking = true;
           }
-          element.attachEvent('on' + eventName, function() {
+          element.attachEvent("on" + eventName, function() {
             func.call(element, window.event);
           });
         }
@@ -501,9 +563,9 @@
         if (!audio.settings.preload) return;
 
         var readyTimer,
-            loadTimer,
-            audio = audio,
-            ios = (/(ipod|iphone|ipad)/i).test(navigator.userAgent);
+          loadTimer,
+          audio = audio,
+          ios = /(ipod|iphone|ipad)/i.test(navigator.userAgent);
 
         // Use timers here rather than the official `progress` event, as Chrome has issues calling `progress` when loading mp3 files from cache.
         readyTimer = setInterval(function() {
@@ -529,10 +591,11 @@
       // <http://javascript.crockford.com/memory/leak.html>
       // This is used to release the memory leak created by the circular references created when fixing `this` scoping for IE. It is called on page unload.
       purge: function(d) {
-        var a = d.attributes, i;
+        var a = d.attributes,
+          i;
         if (a) {
           for (i = 0; i < a.length; i += 1) {
-            if (typeof d[a[i].name] === 'function') d[a[i].name] = null;
+            if (typeof d[a[i].name] === "function") d[a[i].name] = null;
           }
         }
         a = d.childNodes;
@@ -543,36 +606,47 @@
 
       // **DOMready function**
       // As seen here: <https://github.com/dperini/ContentLoaded/>.
-      ready: (function() { return function(fn) {
-        var win = window, done = false, top = true,
-        doc = win.document, root = doc.documentElement,
-        add = doc.addEventListener ? 'addEventListener' : 'attachEvent',
-        rem = doc.addEventListener ? 'removeEventListener' : 'detachEvent',
-        pre = doc.addEventListener ? '' : 'on',
-        init = function(e) {
-          if (e.type == 'readystatechange' && doc.readyState != 'complete') return;
-          (e.type == 'load' ? win : doc)[rem](pre + e.type, init, false);
-          if (!done && (done = true)) fn.call(win, e.type || e);
-        },
-        poll = function() {
-          try { root.doScroll('left'); } catch(e) { setTimeout(poll, 50); return; }
-          init('poll');
-        };
-        if (doc.readyState == 'complete') fn.call(win, 'lazy');
-        else {
-          if (doc.createEventObject && root.doScroll) {
-            try { top = !win.frameElement; } catch(e) { }
-            if (top) poll();
+      ready: (function() {
+        return function(fn) {
+          var win = window,
+            done = false,
+            top = true,
+            doc = win.document,
+            root = doc.documentElement,
+            add = doc.addEventListener ? "addEventListener" : "attachEvent",
+            rem = doc.addEventListener ? "removeEventListener" : "detachEvent",
+            pre = doc.addEventListener ? "" : "on",
+            init = function(e) {
+              if (e.type == "readystatechange" && doc.readyState != "complete")
+                return;
+              (e.type == "load" ? win : doc)[rem](pre + e.type, init, false);
+              if (!done && (done = true)) fn.call(win, e.type || e);
+            },
+            poll = function() {
+              try {
+                root.doScroll("left");
+              } catch (e) {
+                setTimeout(poll, 50);
+                return;
+              }
+              init("poll");
+            };
+          if (doc.readyState == "complete") fn.call(win, "lazy");
+          else {
+            if (doc.createEventObject && root.doScroll) {
+              try {
+                top = !win.frameElement;
+              } catch (e) {}
+              if (top) poll();
+            }
+            doc[add](pre + "DOMContentLoaded", init, false);
+            doc[add](pre + "readystatechange", init, false);
+            win[add](pre + "load", init, false);
           }
-          doc[add](pre + 'DOMContentLoaded', init, false);
-          doc[add](pre + 'readystatechange', init, false);
-          win[add](pre + 'load', init, false);
-        }
-      }
+        };
       })()
-
     }
-  }
+  };
 
   // ## The audiojs class
   // We create one of these per `<audio>` and then push them into `audiojs['instances']`.
@@ -580,18 +654,21 @@
     // Each audio instance returns an object which contains an API back into the `<audio>` element.
     this.element = element;
     this.wrapper = element.parentNode;
-    this.source = element.getElementsByTagName('source')[0] || element;
+    this.source = element.getElementsByTagName("source")[0] || element;
     // First check the `<audio>` element directly for a src and if one is not found, look for a `<source>` element.
     this.mp3 = (function(element) {
-      var source = element.getElementsByTagName('source')[0];
-      return element.getAttribute('src') || (source ? source.getAttribute('src') : null);
+      var source = element.getElementsByTagName("source")[0];
+      return (
+        element.getAttribute("src") ||
+        (source ? source.getAttribute("src") : null)
+      );
     })(element);
     this.settings = settings;
     this.loadStartedCalled = false;
     this.loadedPercent = 0;
     this.duration = 1;
     this.playing = false;
-  }
+  };
 
   container[audiojsInstance].prototype = {
     // API access events:
@@ -607,7 +684,7 @@
     },
     load: function(mp3) {
       this.loadStartedCalled = false;
-      this.source.setAttribute('src', mp3);
+      this.source.setAttribute("src", mp3);
       // The now outdated `load()` method is required for Safari 4
       this.element.load();
       this.mp3 = mp3;
@@ -633,30 +710,34 @@
         if (!this.loadStartedCalled) {
           this.loadStartedCalled = this.loadStarted();
         }
-        var durationLoaded = this.element.buffered.end(this.element.buffered.length - 1);
+        var durationLoaded = this.element.buffered.end(
+          this.element.buffered.length - 1
+        );
         this.loadedPercent = durationLoaded / this.duration;
 
         this.settings.loadProgress.apply(this, [this.loadedPercent]);
       }
     },
     playPause: function() {
-      if (this.playing){
-          $('.btn-play-pause').html('play_circle_outline')
-          this.pause()
-      }else{
-          $('.btn-play-pause').html('pause_circle_outline')
-          this.play();
+      if (this.playing) {
+        $(".play-pause").removeClass("play");
+        $("#list_music").removeClass("play");
+        this.pause();
+      } else {
+        $(".play-pause").addClass("play");
+        $("#list_music").addClass("play");
+        this.play();
       }
     },
     play: function() {
-      var ios = (/(ipod|iphone|ipad)/i).test(navigator.userAgent);
+      var ios = /(ipod|iphone|ipad)/i.test(navigator.userAgent);
       // On iOS this interaction will trigger loading the mp3, so run `init()`.
       if (ios && this.element.readyState == 0) this.init.apply(this);
       // If the audio hasn't started preloading, then start it now.
       // Then set `preload` to `true`, so that any tracks loaded in subsequently are loaded straight away.
       if (!this.settings.preload) {
         this.settings.preload = true;
-        this.element.setAttribute('preload', 'auto');
+        this.element.setAttribute("preload", "auto");
         container[audiojs].events.trackLoadProgress(this);
       }
       this.playing = true;
@@ -676,7 +757,7 @@
       if (!this.settings.loop) this.pause.apply(this);
       this.settings.trackEnded.apply(this);
     }
-  }
+  };
 
   // **getElementsByClassName**
   // Having to rely on `getElementsByTagName` is pretty inflexible internally, so a modified version of Dustin Diaz's `getElementsByClassName` has been included.
@@ -688,9 +769,10 @@
     if (node.getElementsByClassName) {
       matches = node.getElementsByClassName(searchClass);
     } else {
-      var i, l,
-          els = node.getElementsByTagName("*"),
-          pattern = new RegExp("(^|\\s)"+searchClass+"(\\s|$)");
+      var i,
+        l,
+        els = node.getElementsByTagName("*"),
+        pattern = new RegExp("(^|\\s)" + searchClass + "(\\s|$)");
 
       for (i = 0, l = els.length; i < l; i++) {
         if (pattern.test(els[i].className)) {
@@ -700,5 +782,5 @@
     }
     return matches.length > 1 ? matches : matches[0];
   };
-// The global variable names are passed in here and can be changed if they conflict with anything else.
-})('audiojs', 'audiojsInstance', this);
+  // The global variable names are passed in here and can be changed if they conflict with anything else.
+})("audiojs", "audiojsInstance", this);
