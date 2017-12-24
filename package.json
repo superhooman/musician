@@ -1,48 +1,29 @@
 {
   "name": "musician",
-  "version": "1.0.2",
-  "description": "Standalone music player for VK",
+  "version": "1.3.0",
+  "description": "Lightweight VK music player.",
   "main": "main.js",
-  "build": {
-    "appId": "com.uenify.musician",
-    "mac": {
-      "category": "public.app-category.music",
-      "target": "dmg",
-      "icon": "icon.icns",
-      "asar": "false"
-    },
-    "win": {
-      "target": "nsis"
-    }
-  },
   "scripts": {
-    "start": "electron .",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "dev": "webpack",
+    "start": "electron ."
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/uenify/musician.git"
-  },
-  "keywords": [
-    "VKAPI",
-    "Vk",
-    "music",
-    "player",
-    "electron"
-  ],
-  "author": "Uenify",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/uenify/musician/issues"
-  },
-  "homepage": "https://github.com/uenify/musician#readme",
+  "author": "Uenify ",
+  "repository": "uenify/musician",
+  "license": "MIT",
   "devDependencies": {
-    "electron": "^1.6.10",
-    "electron-builder": "^19.37.2"
+    "babel-core": "^6.23.1",
+    "babel-loader": "^6.3.2",
+    "babel-preset-react": "^6.23.0",
+    "css-loader": "^0.26.1",
+    "electron": "^1.4.15",
+    "electron-reload": "^1.1.0",
+    "extract-text-webpack-plugin": "^2.0.0-rc.3",
+    "file-loader": "^0.9.0",
+    "webpack": "^2.2.1"
   },
   "dependencies": {
-    "electron-settings": "^3.1.3",
-    "node-notifier": "^5.1.2"
+    "electron-settings": "^3.1.4",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
   }
 }

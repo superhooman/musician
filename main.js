@@ -1,57 +1,33 @@
-const { app, BrowserWindow, globalShortcut } = require("electron");
-const path = require("path");
-const url = require("url");
+// Basic init
+const electron = require('electron')
+const { app, BrowserWindow, globalShortcut } = electron;
 
-let mainWindow;
+// Let electron reloads by itself when webpack watches changes in ./app/
+require('electron-reload')(__dirname)
 
-function createWindow() {
-  //создаем окно
-  mainWindow = new BrowserWindow({
-    width: 425,
-    height: 650,
-    resizable: true,
-    titleBarStyle: "hidden",
-    minWidth: 320,
-    minHeight: 450
-  });
-  mainWindow.loadURL(
-    url.format({
-      pathname: path.join(__dirname, "index.html"),
-      protocol: "file:",
-      slashes: true
-    })
-  );
-  mainWindow.on("closed", function() {
-    app.quit(); //Чтобы не остался активным
-    mainWindow = null;
-  });
-}
+// To avoid being garbage collected
+let mainWindow
 
-app.on("ready", () => {
-  createWindow();
-  globalShortcut.register("MediaPlayPause", () =>
-    mainWindow.webContents.send("ping", "control:playPause")
-  );
-  globalShortcut.register("MediaNextTrack", () =>
-    mainWindow.webContents.send("ping", "control:nextTrack")
-  );
-  globalShortcut.register("MediaPreviousTrack", () =>
-    mainWindow.webContents.send("ping", "control:prevTrack")
-  );
-});
+app.on('ready', () => {
 
-// Когда на макоси закрывают все окна
-// Это понадобится в будущем, а пока что просто выход
-app.on("window-all-closed", function() {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
-});
+    let mainWindow = new BrowserWindow({
+        width: 425,
+        height: 650,
+        resizable: true,
+        vibrancy: "popover",
+        titleBarStyle: "hiddenInset",
+        minWidth: 320,
+        minHeight: 450
+      });
 
-// Когда на макоси апп все еще активен, но окон нет
-// и апп запускают опять
-app.on("activate", function() {
-  if (mainWindow === null) {
-    createWindow();
-  }
-});
+    mainWindow.loadURL(`file://${__dirname}/app/index.html`)
+    globalShortcut.register("MediaPlayPause", () =>
+      mainWindow.webContents.send("ping", "control:playPause")
+    );
+    globalShortcut.register("MediaNextTrack", () =>
+      mainWindow.webContents.send("ping", "control:nextTrack")
+    );
+    globalShortcut.register("MediaPreviousTrack", () =>
+      mainWindow.webContents.send("ping", "control:prevTrack")
+    );
+})

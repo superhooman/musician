@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Electron + React + Webpack</title>
+    <link rel="stylesheet" href="build/bundle.css">
+</head>
+
+<body>
+    <div id="app"></div>
+    <script>
+        const {
+            webFrame
+        } = window.require("electron");
+        const settings = window.require("electron-settings");
+        var vk, uid
+        webFrame.setZoomLevelLimits(1, 1);
+        var music = []
+        var current = 0
+        var player
+        const getaudio = (e, callback) => {
+            if (e < 0) {
+                e = 0;
+            }
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "https://m.vk.com/audio", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.setRequestHeader("x-requested-with", "XMLHttpRequest");
+            xhr.onreadystatechange = function () {
+                if (this.readyState != 4) return;
+                var data = eval("(" + this.responseText + ")");
+                for (var i in data[3][0]) {
+                    if (
+                        (data[3][0][i][3] != "" && data[3][0][i][4] != "",
+                            data[3][0][i][2] != "")
+                    ) {
+                        var tr = {
+                            artist: decodeHtmlEntity(data[3][0][i][3]),
+                            title: decodeHtmlEntity(data[3][0][i][4]),
+                            src: geturl(data[3][0][i][2]),
+                            duration: data[3][0][i][5],
+                            cover_css: data[3][0][i][8],
+                            selected: false,
+                        };
+                        music.push(tr);
+                    }
+                }
+                if (Object.keys(data[3][0]).length > 30) {
+                    getaudio(music.length, callback);
+                } else {
+                    settings.set("music", music);
+                    callback
+                }
+            };
+            xhr.send("_ajax=1&offset=" + e);
+        };
+        var decodeHtmlEntity = function (str) {
+            return str.replace(/&#(\d+);/g, function (match, dec) {
+                return String.fromCharCode(dec);
+            });
+        };
+    </script>
+    <script src="build/check.js"></script>
+    <script src="build/bundle.js"></script>
+</body>
+
+</html>
