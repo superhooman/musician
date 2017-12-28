@@ -40,6 +40,7 @@ body {
   height: 100% !important;
   width: 100% !important;
   background: transparent;
+  overflow: hidden;
   transform: none;
   transition: transform .4s ease-in-out, opacity .4s ease-in-out;
 }
@@ -281,8 +282,25 @@ body {
   height: calc(100% - 130px);
   width: 100%;
   transition: height .4s ease-in-out;
-  overflow: scroll;
+  overflow-y: scroll;
 }
+/*
+#listwrap::-webkit-scrollbar-track
+{
+	background-color: #F5F5F5;
+}
+
+#listwrap::-webkit-scrollbar
+{
+  width: 8px;
+	background-color: #F5F5F5;
+}
+
+#listwrap::-webkit-scrollbar-thumb
+{
+	background-color: #707070;
+}
+*/
 .plate{
   background-color: #fff;
   color: rgba(0,0,0,0.4);

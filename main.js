@@ -14,6 +14,7 @@ app.on('ready', () => {
         width: 425,
         height: 650,
         resizable: true,
+        autoHideMenuBar: true,
         vibrancy: "popover",
         titleBarStyle: "hiddenInset",
         minWidth: 320,
