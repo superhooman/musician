@@ -1,23 +1,39 @@
 import React, { Component } from "react";
 import logo from "../assets/logo.svg";
 
-const loadvk = e => {
-  var form = document.querySelector("form");
-  var data = new FormData(form);
-  var xmlHttp = new XMLHttpRequest();
-  xmlHttp.onreadystatechange = function() {
-    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-      uid = this.responseText.split("pid=")[1].split(";")[0];
-      settings.set("user.id", uid);
-      getaudio()
-    }
-  };
-  xmlHttp.open("POST", vk, true); // true for asynchronous
-  xmlHttp.send(data);
-};
-
 
 class Login extends Component {
+  constructor(props){
+    super(props)
+  }
+  login(){
+    var form = document.querySelector("form");
+    var data = new FormData(form);
+    var done = this.props.ondone
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function () {
+      if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+        if (this.responseText.search('/restore') == -1) {
+          uid = this.responseText.split("pid=")[1].split(";")[0];
+          var photo = this.responseText.split('data-photo="')[1].split('"')[0]
+          var logout_url = 'https://login.vk.com/' + this.responseText.split('https://login.vk.com/')[1].split('"')[0]
+          settings.set("user.photo", photo);
+  
+          settings.set("user.id", uid);
+  
+          settings.set("user.logout", logout_url);
+         
+          getaudio(-1, done)
+          
+        }else{
+          alert('Wrong pass')
+        }
+  
+      }
+    };
+    xmlHttp.open("POST", vk, true); // true for asynchronous
+    xmlHttp.send(data);
+  }
   render() {
     return (
       <div id="splash" className="screen">
@@ -29,7 +45,7 @@ class Login extends Component {
         <div className="login_main">
           <div className="login_title">
             <h1>Musician</h1>
-            <form noValidate action="javascript:void(0)" onSubmit={loadvk}>
+            <form noValidate action="javascript:void(0)" onSubmit={this.login.bind(this)}>
               <input type="text" name="email" placeholder="Почта или номер" />
               <br />
               <input type="password" placeholder="••••••" name="pass" />
@@ -41,15 +57,6 @@ class Login extends Component {
                 value="Войти"
               />
             </form>
-          </div>
-          <div className="login_footer">
-            <a data-href="https://vk.com/join" className="login_footer_link">
-              Зарегистрироваться
-            </a>
-            <span className="login_footer_bullet">•</span>
-            <a data-href="https://vk.com/restore" className="login_footer_link">
-              Забыли пароль?
-            </a>
           </div>
         </div>
       </div>

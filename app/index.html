@@ -50,7 +50,7 @@
                     getaudio(music.length, callback);
                 } else {
                     settings.set("music", music);
-                    callback
+                    callback()
                 }
             };
             xhr.send("_ajax=1&offset=" + e);

@@ -8,20 +8,33 @@ require('electron-reload')(__dirname)
 // To avoid being garbage collected
 let mainWindow
 
+var platform = process.platform
+
 app.on('ready', () => {
 
-    let mainWindow = new BrowserWindow({
+    switch(platform){
+      case 'win32': mainWindow = new BrowserWindow({
         width: 425,
         height: 650,
         resizable: true,
         autoHideMenuBar: true,
+        frame: false,
+        minWidth: 320,
+        minHeight: 450
+      });
+      break
+      default: mainWindow = new BrowserWindow({
+        width: 425,
+        height: 650,
+        resizable: true,
         vibrancy: "popover",
         titleBarStyle: "hiddenInset",
         minWidth: 320,
         minHeight: 450
       });
+    }
 
-    mainWindow.loadURL(`file://${__dirname}/app/index.html`)
+    mainWindow.loadURL('file://'+__dirname+'/app/index.html?platform='+platform)
     globalShortcut.register("MediaPlayPause", () =>
       mainWindow.webContents.send("ping", "control:playPause")
     );
