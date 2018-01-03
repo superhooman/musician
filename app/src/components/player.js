@@ -1,8 +1,17 @@
 import React, { Component } from "react";
-import ReactList from "react-list";
-import Track from "./track.js";
-import { setTimeout, setInterval } from "timers";
+import { SortableContainer, SortableElement, arrayMove, SortableHandle } from 'react-sortable-hoc';
+import { List, AutoSizer } from 'react-virtualized';
 const { remote } = require('electron')
+const SortableList = SortableContainer(List, { withRef: true })
+const SortableRow = SortableElement(({ children }) => children)
+const DragHandle = SortableHandle(() => <span className="draghandle">=</span>);
+
+/*
+<div id="playlists">
+  <div className="playlist color-main">Основной</div>
+</div>
+*/
+
 class Player extends Component {
   constructor(props) {
     super(props);
@@ -10,8 +19,10 @@ class Player extends Component {
       scrubber: 0,
       loaded: 0,
       loop: false,
+      music: music,
       menu: false
     };
+
     this.playpause = this.playpause.bind(this);
     this.loop = this.loop.bind(this)
   }
@@ -54,6 +65,7 @@ class Player extends Component {
     });
   }
 
+
   playpause() {
     this.refs.play.classList.toggle("pause");
     if (player.paused) {
@@ -77,29 +89,30 @@ class Player extends Component {
     if (i == current) {
       this.playpause();
     } else {
-      music[current].selected = false;
+      this.state.music[current].selected = false;
       player.pause();
       current = i;
-      player.src = music[i].src;
-      music[current].selected = true;
+      player.src = this.state.music[i].src;
+      this.state.music[current].selected = true;
       player.play();
       this.refs.play.classList.add("pause");
     }
+    this.forceUpdate();
   }
 
   next() {
-    if (current == music.length - 1) {
-      music[current].selected = false;
+    if (current == this.state.music.length - 1) {
+      this.state.music[current].selected = false;
       current = 0;
-      player.src = music[current].src;
-      music[current].selected = true;
+      player.src = this.state.music[current].src;
+      this.state.music[current].selected = true;
       player.play();
       this.refs.play.classList.add("pause");
     } else {
-      music[current].selected = false;
+      this.state.music[current].selected = false;
       current++;
-      player.src = music[current].src;
-      music[current].selected = true;
+      player.src = this.state.music[current].src;
+      this.state.music[current].selected = true;
       player.play();
       this.refs.play.classList.add("pause");
     }
@@ -126,28 +139,16 @@ class Player extends Component {
       player.play();
       this.refs.play.classList.add("pause");
     } else {
-      music[current].selected = false;
+      this.state.music[current].selected = false;
       current = current - 1;
-      player.src = music[current].src;
-      music[current].selected = true;
+      player.src = this.state.music[current].src;
+      this.state.music[current].selected = true;
       player.play();
       this.refs.play.classList.add("pause");
     }
     this.forceUpdate();
   }
 
-  renderItem(i, key) {
-    return (
-      <Track
-        key={key}
-        i={i}
-        onClick={() => {
-          this.change_audio(i);
-          this.forceUpdate();
-        }}
-      />
-    );
-  }
   menu() {
     this.setState({
       menu: this.state.menu ? false : true
@@ -166,13 +167,26 @@ class Player extends Component {
     xmlHttp.send(null);
   }
 
+  reorder({ oldIndex, newIndex }) {
+    if (oldIndex > current && newIndex <= current) {
+      current = current + 1
+    } else if (oldIndex < current && newIndex >= current) {
+      current = current - 1
+    }else if (oldIndex === current) {
+      current = newIndex
+    }
+    this.setState({
+      music: arrayMove(this.state.music, oldIndex, newIndex)
+    })
+  }
+
   render() {
     return (
       <div id="Music" className="screen">
         {this.state.menu ?
           (<div className="menu">
             <div className="menu-list" onClick={this.menu.bind(this)}>Настройки</div>
-            <div className="menu-list" onClick={()=>{
+            <div className="menu-list" onClick={() => {
               this.menu.bind(this)
               this.logout()
             }}>Выйти</div>
@@ -231,19 +245,50 @@ class Player extends Component {
             ><div className="dot" /></div>
           </div>
         </div>
-        <div id="playlists">
-          <div className="playlist color-main">Основной</div>
-        </div>
-        <div id="listwrap">
-          <ReactList
-            itemRenderer={this.renderItem.bind(this)}
-            length={music.length}
-            type="uniform"
-          />
-        </div>
+
+        <AutoSizer>
+          {({ width }) => {
+            return (
+              <SortableList
+                ref="list"
+                className="list"
+                lockAxis="y"
+                height={window.innerHeight - 133}
+                width={width}
+                overscanRowCount={5}
+                rowHeight={107}
+                useDragHandle={true}
+                rowRenderer={({ index, key, style }) => {
+                  var styles = {
+                    backgroundImage: this.state.music[index].cover_css ? 'url(' + this.state.music[index].cover_css.split('url(')[1].split(')')[0] + ')' : ''
+                  }
+                  var selected = this.state.music[index].selected ? "track  -selected" : "track"
+                  return (
+                    <SortableRow  key={key} index={index}>
+                      <div onClick={() => {
+                        this.change_audio(index)
+                      }} style={style} className={selected}>
+                        <div style={styles} className={this.state.music[index].cover_css ? 'track-album' : 'track-album noimage'}></div>
+                        <div className="track-content">
+                          <p className="track-name">{this.state.music[index].title}</p>
+                          <p className="track-artist">{this.state.music[index].artist}</p>
+                        </div>
+                        <DragHandle />
+                      </div>
+                    </SortableRow>
+                  )
+                }}
+                onSortEnd={this.reorder.bind(this)}
+                rowCount={this.state.music.length}
+              >
+              </SortableList>)
+          }}
+        </AutoSizer>
       </div>
     );
   }
 }
+
+
 
 export default Player;

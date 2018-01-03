@@ -60,9 +60,9 @@ body.win32.maximized {
   padding: 0px;
   height: 30px;
   padding-left: 14px;
-  background-color: rgba(54, 169, 245, 1);
+  background-color: white;
   box-sizing: border-box;
-  color: white;
+  color: #000;
   display: flex;
   justify-content: space-between;
 }
@@ -78,6 +78,22 @@ body.win32.maximized {
   background-color: rgba(0, 0, 0, .2);
 }
 
+.win32 .-minimize{
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTJweCIgaGVpZ2h0PSIxcHgiIHZpZXdCb3g9IjAgMCAxMiAxIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPCEtLSBHZW5lcmF0b3I6IFNrZXRjaCA0MCAoMzM3NjIpIC0gaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoIC0tPgogICAgPHRpdGxlPm1pbmltaXplPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CiAgICAgICAgPGcgaWQ9IndpbmRvd19idG4iIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0zMC4wMDAwMDAsIC0yNy4wMDAwMDApIiBmaWxsPSIjMDAwMDAwIj4KICAgICAgICAgICAgPGcgaWQ9Ikdyb3VwIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMi4wMDAwMDAsIDEyLjAwMDAwMCkiPgogICAgICAgICAgICAgICAgPGcgaWQ9InRvcC1yaWdodC1jb250cm9scyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTguMDAwMDAwLCAxMC4wMDAwMDApIj4KICAgICAgICAgICAgICAgICAgICA8cmVjdCBpZD0ibWluaW1pemUiIHg9IjAiIHk9IjUiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxIiBmaWxsPSIjMDAwMDAwIj48L3JlY3Q+CiAgICAgICAgICAgICAgICA8L2c+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==);
+  background-size: 9pt 1px;
+}
+.win32 .-maximize{
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDEwIDEwIj4KICA8cGF0aCBmaWxsPSIjMDAwMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xOCwxMCBMMjgsMTAgTDI4LDIwIEwxOCwyMCBMMTgsMTAgWiBNMTksMTEgTDI3LDExIEwyNywxOSBMMTksMTkgTDE5LDExIFoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xOCAtMTApIiAvPgo8L3N2Zz4=);
+  background-size: 10px 10px;
+}
+.win32.maximized .-maximize{
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIj4KICA8cGF0aCBmaWxsPSIjMDAwMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMSwyIEwxMSwyIEwxMSwxIEwzLDEgTDMsMiBMMTAsMiBMMTAsOSBMMTEsOSBMMTEsMiBMMTEsMiBaIE0yLDIgTDAsMiBMMCwxMiBMMTAsMTIgTDEwLDEwIEwxMiwxMCBMMTIsMCBMMiwwIEwyLDIgTDIsMiBaIE0xLDMgTDksMyBMOSwxMSBMMSwxMSBMMSwzIEwxLDMgWiIgLz4KPC9zdmc+Cg==);
+  background-size: 9pt 9pt;
+}
+.win32 .-close{
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDEyIDEwIj4KICA8ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHN0cm9rZT0iIzAwMDAwMCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMSkiPgogICAgPHBhdGggZD0iTTAsMCBMOS44OTgxNjU3NSw5LjkwMDgyMzk1IiBmaWxsPSIjMDAwMDAwIiAvPgogICAgPHBhdGggZD0iTTAuMTAxODM0MjUyLDAgTDEwLDkuOTAwODIzOTUiIHRyYW5zZm9ybT0ibWF0cml4KC0xIDAgMCAxIDEwLjEwMiAwKSIgZmlsbD0iI2ZmZmZmZiIgLz4KICA8L2c+Cjwvc3ZnPgo=)
+}
+/*
 .win32.maximized .-maximize {
   background-size: 9pt 9pt;
   background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIj4KICA8cGF0aCBmaWxsPSIjZmZmZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMSwyIEwxMSwyIEwxMSwxIEwzLDEgTDMsMiBMMTAsMiBMMTAsOSBMMTEsOSBMMTEsMiBMMTEsMiBaIE0yLDIgTDAsMiBMMCwxMiBMMTAsMTIgTDEwLDEwIEwxMiwxMCBMMTIsMCBMMiwwIEwyLDIgTDIsMiBaIE0xLDMgTDksMyBMOSwxMSBMMSwxMSBMMSwzIEwxLDMgWiIgLz4KPC9zdmc+Cg==);
@@ -100,9 +116,12 @@ body.win32.maximized {
   background-size: 10px 10px;
   background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDEwIDEwIj4KICA8cGF0aCBmaWxsPSIjZmZmZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xOCwxMCBMMjgsMTAgTDI4LDIwIEwxOCwyMCBMMTgsMTAgWiBNMTksMTEgTDI3LDExIEwyNywxOSBMMTksMTkgTDE5LDExIFoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xOCAtMTApIiAvPgo8L3N2Zz4K)
 }
+*/
 
 .win32 .-close:hover {
   background-color: #eb0716;
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDEyIDEwIj4KICA8ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHN0cm9rZT0iI0ZGRkZGRiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMSkiPgogICAgPHBhdGggZD0iTTAsMCBMOS44OTgxNjU3NSw5LjkwMDgyMzk1IiBmaWxsPSIjZmZmZmZmIiAvPgogICAgPHBhdGggZD0iTTAuMTAxODM0MjUyLDAgTDEwLDkuOTAwODIzOTUiIHRyYW5zZm9ybT0ibWF0cml4KC0xIDAgMCAxIDEwLjEwMiAwKSIgZmlsbD0iI2ZmZmZmZiIgLz4KICA8L2c+Cjwvc3ZnPgo=);
+  
 }
 
 .win32 .win-controls {
@@ -282,9 +301,6 @@ body.win32.maximized {
   border-radius: 6px 6px 0 0;
 }
 
-.win32 .header {
-  padding: 48px 12px 0px 12px;
-}
 
 #title {
   display: inline-block;
@@ -420,9 +436,6 @@ body.win32.maximized {
   overflow-y: scroll;
 }
 
-.win32 #listwrap {
-  height: calc(100% - 146px);
-}
 
 
 /*
@@ -470,19 +483,22 @@ body.win32.maximized {
 }
 
 .track {
+  z-index: 10;
   padding: 16px 12px;
   display: flex;
+  box-sizing: border-box;
   align-items: center;
   cursor: pointer;
   position: relative;
+  background-repeat: repeat;
 }
 
-.track.even {
-  background-color: rgba(255, 255, 255, 0.3)
+.darwin .list div{
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAADWCAMAAAAn8BgsAAAABlBMVEX///////9VfPVsAAAAAnRSTlMATX7+8BUAAAAOSURBVHgBYxiegHE4QgAuZQBsilV5vQAAAABJRU5ErkJggg==);
 }
 
-.win32 .track.even {
-  background-color: #f5f5f5
+.win32 .list div{
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAADWCAMAAAAn8BgsAAAABlBMVEX////19fVC0XEuAAAAAXRSTlMAQObYZgAAAA5JREFUeAFjGJ6AcThCAC5lAGyKVXm9AAAAAElFTkSuQmCC);
 }
 
 .track.-selected {
@@ -531,16 +547,6 @@ body.win32.maximized {
   }
 }
 
-.track.-selected::after {
-  content: ' ';
-  background-color: white;
-  display: block;
-  position: absolute;
-  right: 32px;
-  height: 10px;
-  width: 10px;
-  border-radius: 50%;
-}
 
 .track-name,
 .track-artist {
@@ -558,6 +564,12 @@ body.win32.maximized {
   opacity: 0.7
 }
 
+.draghandle{
+  font-size: 30px;
+  font-weight: 500;
+  opacity: 0.75;
+}
+
 #splash input[type="text"],
 #splash input[type="password"] {
   margin-bottom: 15px;
@@ -565,7 +577,7 @@ body.win32.maximized {
   border: none;
   color: rgb(73, 73, 73);
   padding: 5px 0px;
-  font-size: 18px;
+  font-size: 16px;
   max-width: 200px;
   font-weight: 500;
   width: 100%;
@@ -718,7 +730,7 @@ input[type=range]::-webkit-slider-thumb {
   top: -2px;
   background-color: #36a9f5;
 }
-
+/*
 @media screen and (max-width: 450px) {
   .track-album,
   .track-album.noimage::after {
@@ -732,3 +744,4 @@ input[type=range]::-webkit-slider-thumb {
     width: calc(100% - 110px);
   }
 }
+*/
