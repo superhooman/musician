@@ -12,6 +12,7 @@
   },
   "scripts": {
     "dev": "webpack",
+    "dist32": "build --win --ia32",
     "start": "electron .",
     "dist": "build"
   },
