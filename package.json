@@ -6,7 +6,8 @@
   "build": {
     "appId": "com.uenify.musician",
     "win": {
-      "target": "squirrel"
+      "target": "msi",
+      "icon": "app/build/logo.ico"
     }
   },
   "scripts": {
@@ -31,6 +32,7 @@
     "webpack": "^2.2.1"
   },
   "dependencies": {
+    "electron-context-menu": "^0.9.1",
     "electron-settings": "^3.1.4",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",

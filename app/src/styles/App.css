@@ -1,19 +1,25 @@
 body {
-  color: rgba(0, 0, 0, 0.87);
+  color: rgba(0, 0, 0, 0.87); 
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-weight: 300;
   background-color: transparent;
   user-select: none;
 }
-
 body.win32 {
-  height: 100vh;
-  width: 100%;
+  height: calc(100vh - 2px);
+  width: calc(100vw - 2px);
   box-sizing: border-box;
-  border: 1px #36a9f5 solid;
+  margin: 1px!important;
   overflow: hidden;
   position: relative;
+}
+
+.win32 #app{
+  background-color: white;
+  position: relative;
+  height: calc(100vh - 2px);
+  width: calc(100vw - 2px);
 }
 
 body.win32.maximized {
@@ -75,6 +81,10 @@ body.win32.maximized {
 }
 
 .win32 .window_header_button:not(.-close):hover {
+  background-color: rgba(0, 0, 0, .1);
+}
+
+.win32 .window_header_button:not(.-close):active {
   background-color: rgba(0, 0, 0, .2);
 }
 
@@ -121,9 +131,11 @@ body.win32.maximized {
 .win32 .-close:hover {
   background-color: #eb0716;
   background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDEyIDEwIj4KICA8ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHN0cm9rZT0iI0ZGRkZGRiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMSkiPgogICAgPHBhdGggZD0iTTAsMCBMOS44OTgxNjU3NSw5LjkwMDgyMzk1IiBmaWxsPSIjZmZmZmZmIiAvPgogICAgPHBhdGggZD0iTTAuMTAxODM0MjUyLDAgTDEwLDkuOTAwODIzOTUiIHRyYW5zZm9ybT0ibWF0cml4KC0xIDAgMCAxIDEwLjEwMiAwKSIgZmlsbD0iI2ZmZmZmZiIgLz4KICA8L2c+Cjwvc3ZnPgo=);
-  
 }
-
+.win32 .-close:active{
+  background-color: #a1405c;
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDEyIDEwIj4KICA8ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHN0cm9rZT0iI0ZGRkZGRiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMSkiPgogICAgPHBhdGggZD0iTTAsMCBMOS44OTgxNjU3NSw5LjkwMDgyMzk1IiBmaWxsPSIjZmZmZmZmIiAvPgogICAgPHBhdGggZD0iTTAuMTAxODM0MjUyLDAgTDEwLDkuOTAwODIzOTUiIHRyYW5zZm9ybT0ibWF0cml4KC0xIDAgMCAxIDEwLjEwMiAwKSIgZmlsbD0iI2ZmZmZmZiIgLz4KICA8L2c+Cjwvc3ZnPgo=);
+}
 .win32 .win-controls {
   z-index: 10;
   display: block;
@@ -323,6 +335,9 @@ body.win32.maximized {
   cursor: pointer;
   height: 40px;
   width: 40px;
+}
+#profile.active{
+  box-shadow: 0px 0px 0.5px 2px rgba(54,169,245,0.4);
 }
 
 #search input {
@@ -559,17 +574,21 @@ body.win32.maximized {
 .track-name {
   font-weight: 600;
 }
-
+.grabbing *{
+  cursor: -webkit-grabbing!important;
+}
 .track-artist {
   opacity: 0.7
 }
-
+.track:active {
+  cursor: pointer!important;
+}
 .draghandle{
   font-size: 30px;
   font-weight: 500;
+  cursor: -webkit-grab;
   opacity: 0.75;
 }
-
 #splash input[type="text"],
 #splash input[type="password"] {
   margin-bottom: 15px;
@@ -649,7 +668,8 @@ input[type=range]::-webkit-slider-thumb {
   background: #fff;
   border-radius: 4px;
   right: 10px;
-  top: 100px;
+  width: 120px;
+  top: 82px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
   z-index: 10000;
   padding: 10px 0;
@@ -662,8 +682,17 @@ input[type=range]::-webkit-slider-thumb {
 
 .menu-list {
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
   padding: 5px 10px;
+}
+
+.menu-list.disabled{
+  color: #bebebe;
+}
+.menu-list.disabled:hover{
+  color: #bebebe;
+  cursor: not-allowed;
+  background-color: transparent;
 }
 
 .loop svg circle {

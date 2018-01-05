@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { SortableContainer, SortableElement, arrayMove, SortableHandle } from 'react-sortable-hoc';
 import { List, AutoSizer } from 'react-virtualized';
+
 const { remote } = require('electron')
 const SortableList = SortableContainer(List, { withRef: true })
 const SortableRow = SortableElement(({ children }) => children)
@@ -168,6 +169,7 @@ class Player extends Component {
   }
 
   reorder({ oldIndex, newIndex }) {
+    document.body.classList.remove('grabbing')
     if (oldIndex > current && newIndex <= current) {
       current = current + 1
     } else if (oldIndex < current && newIndex >= current) {
@@ -185,7 +187,7 @@ class Player extends Component {
       <div id="Music" className="screen">
         {this.state.menu ?
           (<div className="menu">
-            <div className="menu-list" onClick={this.menu.bind(this)}>Настройки</div>
+            <div className="menu-list disabled" onClick={this.menu.bind(this)}>Настройки</div>
             <div className="menu-list" onClick={() => {
               this.menu.bind(this)
               this.logout()
@@ -194,7 +196,7 @@ class Player extends Component {
           : ''}
         <div className="header">
           <h1 id="title">Основной плейлист</h1>
-          <div id="profile" style={
+          <div id="profile" className={this.state.menu? 'active': ''} style={
             {
               backgroundImage: 'url(' + settings.get('user.photo') + ')'
             }
@@ -253,8 +255,12 @@ class Player extends Component {
                 ref="list"
                 className="list"
                 lockAxis="y"
+                lockToContainerEdges={true}
                 height={window.innerHeight - 133}
                 width={width}
+                onSortStart={()=>{
+                  document.body.classList.add('grabbing')
+                }}
                 overscanRowCount={5}
                 rowHeight={107}
                 useDragHandle={true}

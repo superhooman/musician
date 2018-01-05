@@ -7,7 +7,7 @@ const {
 } = electron;
 
 // Let electron reloads by itself when webpack watches changes in ./app/
-require('electron-reload')(__dirname)
+//require('electron-reload')(__dirname)
 
 // To avoid being garbage collected
 let mainWindow
@@ -24,6 +24,7 @@ app.on('ready', () => {
         resizable: true,
         autoHideMenuBar: true,
         frame: false,
+        backgroundColor: '#36a9f5',
         minWidth: 320,
         minHeight: 450
       });
@@ -40,6 +41,18 @@ app.on('ready', () => {
       });
   }
 
+  require('electron-context-menu')({
+    showInspectElement: false,
+    prepend: (params, browserWindow) => {
+      console.log(params)
+      return([{
+        label: 'Rainbow',
+        // Only show it when right-clicking images 
+        visible: params.y > 132
+    }])
+    }
+});
+
   mainWindow.loadURL('file://' + __dirname + '/app/index.html?platform=' + platform)
   globalShortcut.register("MediaPlayPause", () =>
     mainWindow.webContents.send("ping", "control:playPause")
@@ -50,7 +63,7 @@ app.on('ready', () => {
   globalShortcut.register("MediaPreviousTrack", () =>
     mainWindow.webContents.send("ping", "control:prevTrack")
   );
-  mainWindow.webContents.executeJavaScript(`
+  /*mainWindow.webContents.executeJavaScript(`
     var path = require('path');
     module.paths.push(path.resolve('node_modules'));
     module.paths.push(path.resolve('../node_modules'));
@@ -59,5 +72,7 @@ app.on('ready', () => {
     module.paths.push(path.resolve(__dirname, '..', '..', 'app', 'node_modules'));
     module.paths.push(path.resolve(__dirname, '..', '..', 'resources/app.asar', 'node_modules'));
     path = undefined;
-  `);
+  `);*/
 })
+
+app.on('window-all-closed', app.quit)
