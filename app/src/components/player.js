@@ -1,10 +1,15 @@
 import React, { Component } from "react";
-import { SortableContainer, SortableElement, arrayMove, SortableHandle } from 'react-sortable-hoc';
-import { List, AutoSizer } from 'react-virtualized';
+import {
+  SortableContainer,
+  SortableElement,
+  arrayMove,
+  SortableHandle
+} from "react-sortable-hoc";
+import { List, AutoSizer } from "react-virtualized";
 
-const { remote } = require('electron')
-const SortableList = SortableContainer(List, { withRef: true })
-const SortableRow = SortableElement(({ children }) => children)
+const { remote } = require("electron");
+const SortableList = SortableContainer(List, { withRef: true });
+const SortableRow = SortableElement(({ children }) => children);
 const DragHandle = SortableHandle(() => <span className="draghandle">=</span>);
 
 /*
@@ -25,7 +30,7 @@ class Player extends Component {
     };
 
     this.playpause = this.playpause.bind(this);
-    this.loop = this.loop.bind(this)
+    this.loop = this.loop.bind(this);
   }
 
   componentWillMount() {
@@ -44,9 +49,9 @@ class Player extends Component {
         this.setState({
           scrubber: parseFloat(played),
           loaded: loaded
-        })
+        });
       }
-    })
+    });
     player.onended = () => {
       if (!player.loop) {
         this.next();
@@ -66,7 +71,6 @@ class Player extends Component {
     });
   }
 
-
   playpause() {
     this.refs.play.classList.toggle("pause");
     if (player.paused) {
@@ -77,12 +81,12 @@ class Player extends Component {
   }
 
   play() {
-    player.play()
+    player.play();
     this.refs.play.classList.add("pause");
   }
 
   pause() {
-    player.pause()
+    player.pause();
     this.refs.play.classList.remove("pause");
   }
 
@@ -124,12 +128,12 @@ class Player extends Component {
     player.loop = player.loop ? false : true;
     this.setState({
       loop: player.loop ? true : false
-    })
+    });
   }
 
   scrubber() {
     this.setState({
-      scrubber: parseFloat(this.refs.scrubber.value),
+      scrubber: parseFloat(this.refs.scrubber.value)
     });
     player.currentTime = this.refs.scrubber.value / 100 * player.duration;
   }
@@ -153,54 +157,66 @@ class Player extends Component {
   menu() {
     this.setState({
       menu: this.state.menu ? false : true
-    })
+    });
   }
   logout() {
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function () {
+    xmlHttp.onreadystatechange = function() {
       if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
         settings.deleteAll();
         remote.app.relaunch();
         remote.app.exit(0);
       }
     };
-    xmlHttp.open("GET", settings.get('user.logout'), true); // true for asynchronous
+    xmlHttp.open("GET", settings.get("user.logout"), true); // true for asynchronous
     xmlHttp.send(null);
   }
 
   reorder({ oldIndex, newIndex }) {
-    document.body.classList.remove('grabbing')
+    document.body.classList.remove("grabbing");
     if (oldIndex > current && newIndex <= current) {
-      current = current + 1
+      current = current + 1;
     } else if (oldIndex < current && newIndex >= current) {
-      current = current - 1
-    }else if (oldIndex === current) {
-      current = newIndex
+      current = current - 1;
+    } else if (oldIndex === current) {
+      current = newIndex;
     }
     this.setState({
       music: arrayMove(this.state.music, oldIndex, newIndex)
-    })
+    });
   }
 
   render() {
     return (
       <div id="Music" className="screen">
-        {this.state.menu ?
-          (<div className="menu">
-            <div className="menu-list disabled" onClick={this.menu.bind(this)}>Настройки</div>
-            <div className="menu-list" onClick={() => {
-              this.menu.bind(this)
-              this.logout()
-            }}>Выйти</div>
-          </div>)
-          : ''}
+        {this.state.menu ? (
+          <div className="menu">
+            <div className="menu-list disabled" onClick={this.menu.bind(this)}>
+              Настройки
+            </div>
+            <div
+              className="menu-list"
+              onClick={() => {
+                this.menu.bind(this);
+                this.logout();
+              }}
+            >
+              Выйти
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
         <div className="header">
           <h1 id="title">Основной плейлист</h1>
-          <div id="profile" className={this.state.menu? 'active': ''} style={
-            {
-              backgroundImage: 'url(' + settings.get('user.photo') + ')'
-            }
-          } onClick={this.menu.bind(this)} />
+          <div
+            id="profile"
+            className={this.state.menu ? "active" : ""}
+            style={{
+              backgroundImage: "url(" + settings.get("user.photo") + ")"
+            }}
+            onClick={this.menu.bind(this)}
+          />
         </div>
         <div className="plate">
           <div className="controls">
@@ -219,8 +235,16 @@ class Player extends Component {
                 <path d="M 12,24 20.5,18 12,12 V 24 z M 22,12 v 12 h 2 V 12 h -2 z" />
               </svg>
             </div>
-            <div onClick={this.loop} className={this.state.loop ? 'loop looped' : 'loop'}>
-              <svg height="30px" version="1.1" viewBox="-3 -3 30 30" width="30px">
+            <div
+              onClick={this.loop}
+              className={this.state.loop ? "loop looped" : "loop"}
+            >
+              <svg
+                height="30px"
+                version="1.1"
+                viewBox="-3 -3 30 30"
+                width="30px"
+              >
                 <circle />
                 <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
               </svg>
@@ -228,7 +252,10 @@ class Player extends Component {
           </div>
           <div className="scrubber-cont">
             <div className="scrubber-back line" />
-            <div style={{ width: this.state.loaded + '%' }} className="loaded line" />
+            <div
+              style={{ width: this.state.loaded + "%" }}
+              className="loaded line"
+            />
             <input
               ref="scrubber"
               type="range"
@@ -242,9 +269,11 @@ class Player extends Component {
             />
             <div
               ref="progress"
-              style={{ width: this.state.scrubber + '%' }}
+              style={{ width: this.state.scrubber + "%" }}
               className="progress line"
-            ><div className="dot" /></div>
+            >
+              <div className="dot" />
+            </div>
           </div>
         </div>
 
@@ -258,43 +287,74 @@ class Player extends Component {
                 lockToContainerEdges={true}
                 height={window.innerHeight - 133}
                 width={width}
-                onSortStart={()=>{
-                  document.body.classList.add('grabbing')
+                onSortStart={() => {
+                  document.body.classList.add("grabbing");
                 }}
                 overscanRowCount={5}
                 rowHeight={107}
                 useDragHandle={true}
                 rowRenderer={({ index, key, style }) => {
                   var styles = {
-                    backgroundImage: this.state.music[index].cover_css ? 'url(' + this.state.music[index].cover_css.split('url(')[1].split(')')[0] + ')' : ''
-                  }
-                  var selected = this.state.music[index].selected ? "track  -selected" : "track"
+                    backgroundImage: this.state.music[index].cover_css
+                      ? "url(" +
+                        this.state.music[index].cover_css
+                          .split("url(")[1]
+                          .split(")")[0] +
+                        ")"
+                      : ""
+                  };
+                  var selected = this.state.music[index].selected
+                    ? "track  -selected"
+                    : "track";
                   return (
-                    <SortableRow  key={key} index={index}>
-                      <div onClick={() => {
-                        this.change_audio(index)
-                      }} style={style} className={selected}>
-                        <div style={styles} className={this.state.music[index].cover_css ? 'track-album' : 'track-album noimage'}></div>
+                    <SortableRow key={key} index={index}>
+                      <div style={style} className={selected}>
+                        <div
+                          onClick={() => {
+                            this.change_audio(index);
+                          }}
+                          style={styles}
+                          className={
+                            this.state.music[index].cover_css
+                              ? "track-album"
+                              : "track-album noimage"
+                          }
+                        />
                         <div className="track-content">
-                          <p className="track-name">{this.state.music[index].title}</p>
-                          <p className="track-artist">{this.state.music[index].artist}</p>
+                          <div
+                            onClick={() => {
+                              this.change_audio(index);
+                            }}
+                          >
+                            <p className="track-name">
+                              {this.state.music[index].title}
+                            </p>
+                            <p className="track-artist">
+                              {this.state.music[index].artist}
+                            </p>
+                          </div>
+                          <footer>
+                            <ul>
+                              <li>Скачать</li>
+                              <li>Восп. след.</li>
+                              <li>Удалить</li>
+                            </ul>
+                          </footer>
                         </div>
                         <DragHandle />
                       </div>
                     </SortableRow>
-                  )
+                  );
                 }}
                 onSortEnd={this.reorder.bind(this)}
                 rowCount={this.state.music.length}
-              >
-              </SortableList>)
+              />
+            );
           }}
         </AutoSizer>
       </div>
     );
   }
 }
-
-
 
 export default Player;

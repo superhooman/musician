@@ -69,7 +69,7 @@ export default class App extends Component {
     render() {
         return (
             <div>
-              <div id="titlebar" className="draggable"><h1>Musician</h1>
+              <div id="titlebar" className="draggable">
                 <div className="win-controls">
                   <div className="window_header_button -minimize" onClick={this.minimize}/>
                   <div className="window_header_button -maximize" onClick={this.maximize.bind(this)}/>

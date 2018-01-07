@@ -5,41 +5,42 @@ const {
   BrowserWindow,
   globalShortcut
 } = electron;
+const settings = require("electron-settings");
+
+const getcolor = (theme) => {
+  switch(theme){
+    case 'dark':
+      return '#000000'
+      break
+    case 'white':
+      return '#ffffff'
+      break
+    default:
+      return '#000000'
+      break    
+  }
+}
 
 // Let electron reloads by itself when webpack watches changes in ./app/
-//require('electron-reload')(__dirname)
+require('electron-reload')(__dirname)
 
-// To avoid being garbage collected
-let mainWindow
 
 var platform = process.platform
 
 app.on('ready', () => {
 
-  switch (platform) {
-    case 'win32':
-      mainWindow = new BrowserWindow({
-        width: 425,
-        height: 650,
-        resizable: true,
-        autoHideMenuBar: true,
-        frame: false,
-        backgroundColor: '#36a9f5',
-        minWidth: 320,
-        minHeight: 450
-      });
-      break
-    default:
-      mainWindow = new BrowserWindow({
-        width: 425,
-        height: 650,
-        resizable: true,
-        vibrancy: "popover",
-        titleBarStyle: "hiddenInset",
-        minWidth: 320,
-        minHeight: 450
-      });
-  }
+  const mainWindow = new BrowserWindow({
+    width: 425,
+    height: 650,
+    resizable: true,
+    autoHideMenuBar: true,
+    frame: platform !== 'win32',
+    backgroundColor: settings.has('settings.theme')? getcolor(settings.get('settings.theme')) : '#000000',
+    titleBarStyle: "hiddenInset",
+    minWidth: 390,
+    minHeight: 450
+  });
+
 
   require('electron-context-menu')({
     showInspectElement: false,
