@@ -6,11 +6,15 @@ import {
   SortableHandle
 } from "react-sortable-hoc";
 import { List, AutoSizer } from "react-virtualized";
+import { platform } from "os";
+import { join } from "path";
+
 
 const { remote } = require("electron");
 const SortableList = SortableContainer(List, { withRef: true });
 const SortableRow = SortableElement(({ children }) => children);
 const DragHandle = SortableHandle(() => <span className="draghandle">=</span>);
+const notifier = require('node-notifier');
 
 /*
 <div id="playlists">
@@ -26,12 +30,16 @@ class Player extends Component {
       loaded: 0,
       loop: false,
       music: music,
-      menu: false
+      menu: false,
+      settings: false,
+      theme: settings.has('settings.theme') ? settings.get('settings.theme') : 'white',
+      notify: settings.has('settings.notify') ? settings.get('settings.notify') : true
     };
 
     this.playpause = this.playpause.bind(this);
     this.loop = this.loop.bind(this);
     this.delete_audio = this.delete_audio.bind(this)
+    this.notify = this.notify.bind(this)
   }
 
   componentWillMount() {
@@ -122,7 +130,18 @@ class Player extends Component {
       player.play();
       this.refs.play.classList.add("pause");
     }
+    if (this.state.notify) {
+      this.notify()
+    }
     this.forceUpdate();
+  }
+
+  notify(){
+    notifier.notify({
+      'title': this.state.music[current].title,
+      'message': this.state.music[current].artist,
+      'sound': false
+    });
   }
 
   loop() {
@@ -162,9 +181,10 @@ class Player extends Component {
   }
   logout() {
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() {
+    xmlHttp.onreadystatechange = function () {
       if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-        settings.deleteAll();
+        settings.delete('music');
+        settings.delete('user');
         remote.app.relaunch();
         remote.app.exit(0);
       }
@@ -187,16 +207,28 @@ class Player extends Component {
     });
   }
 
-  delete_audio(index){
+  change_theme() {
+    document.body.classList.toggle('white')
+    document.body.classList.toggle('dark')
+    settings.set('settings', {
+      theme: this.state.theme === "dark" ? 'white' : 'dark',
+      notify: this.state.notify
+    })
+    this.setState({
+      theme: this.state.theme === "dark" ? 'white' : 'dark'
+    })
+  }
+
+  delete_audio(index) {
     var buff = this.state.music
-    if(index !== current){
-      if(index > current){
+    if (index !== current) {
+      if (index > current) {
         buff.splice(index, 1)
-      }else{
+      } else {
         current = current - 1
         buff.splice(index, 1)
       }
-    }else{
+    } else {
       this.next()
       current = current - 1
       buff.splice(index, 1)
@@ -209,9 +241,47 @@ class Player extends Component {
   render() {
     return (
       <div id="Music" className="screen">
+        {this.state.settings ? (
+          <div className="settings-screen">
+            <div className="header">
+              <h1>Настройки</h1>
+              <div onClick={() => {
+                this.setState({
+                  settings: false,
+                  menu: false
+                })
+                this.menu.bind(this)
+              }} className="close" />
+            </div>
+            <div className="settings-list">
+              <div onClick={
+                this.change_theme.bind(this)
+              } className="settings-item">
+                <h2 className="item-name">Тема</h2><div className="item-set">{this.state.theme}</div>
+              </div>
+              <div onClick={
+                () => {
+                  settings.set('settings', {
+                    theme: this.state.theme,
+                    notify: !this.state.notify
+                  })
+                  this.setState({
+                    notify: this.state.notify? false : true
+                  })
+                }
+              } className="settings-item">
+                <h2 className="item-name">Уведомления</h2><div className="item-set">{this.state.notify ? 'Вкл' : 'Выкл'}</div>
+              </div>
+            </div>
+          </div>
+        ) : ''}
         {this.state.menu ? (
           <div className="menu">
-            <div className="menu-list disabled" onClick={this.menu.bind(this)}>
+            <div className="menu-list" onClick={() => {
+              this.setState({
+                settings: true
+              })
+            }}>
               Настройки
             </div>
             <div
@@ -225,8 +295,8 @@ class Player extends Component {
             </div>
           </div>
         ) : (
-          ""
-        )}
+            ""
+          )}
         <div className="header">
           <h1 id="title">Основной плейлист</h1>
           <div
@@ -317,10 +387,10 @@ class Player extends Component {
                   var styles = {
                     backgroundImage: this.state.music[index].cover_css
                       ? "url(" +
-                        this.state.music[index].cover_css
-                          .split("url(")[1]
-                          .split(")")[0] +
-                        ")"
+                      this.state.music[index].cover_css
+                        .split("url(")[1]
+                        .split(")")[0] +
+                      ")"
                       : ""
                   };
                   var selected = this.state.music[index].selected
@@ -356,11 +426,11 @@ class Player extends Component {
                           <footer>
                             <ul>
                               <li><a download={this.state.music[index].artist + ' - ' + this.state.music[index].title + '.mp3'} href={this.state.music[index].src}>Скачать</a></li>
-                              {index === current || index === current + 1 ? '':
-                              (<li onClick={()=>{
-                                this.reorder({oldIndex: index, newIndex: current + 1})
-                              }}>Восп. след.</li>)}
-                              <li onClick={()=>{
+                              {index === current || index === current + 1 ? '' :
+                                (<li onClick={() => {
+                                  this.reorder({ oldIndex: index, newIndex: current + 1 })
+                                }}>Восп. след.</li>)}
+                              <li onClick={() => {
                                 this.delete_audio(index)
                               }}>Удалить</li>
                             </ul>

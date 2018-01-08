@@ -16,8 +16,15 @@ export default class App extends Component {
     if (settings.has("user.id")) {
       uid = settings.get('user.id')
       if(settings.has('music')){
-        music = settings.get('music')
-        this.createplayer()
+        var date = new Date()
+        var compare = date - settings.get('user.date')
+        if (compare < 1000 * 60 * 60 * 8){
+          music = settings.get('music')
+          this.createplayer()
+        }else{
+          settings.set('user.date', date*1)
+          getaudio(-1, this.createplayer)
+        }
       }else{
         getaudio(-1, this.createplayer)
       }

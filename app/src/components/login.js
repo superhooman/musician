@@ -17,8 +17,9 @@ class Login extends Component {
           uid = this.responseText.split("pid=")[1].split(";")[0];
           var photo = this.responseText.split('data-photo="')[1].split('"')[0]
           var logout_url = 'https://login.vk.com/' + this.responseText.split('https://login.vk.com/')[1].split('"')[0]
+          var time = new Date()
           settings.set("user.photo", photo);
-  
+          settings.set("user.date", time)
           settings.set("user.id", uid);
   
           settings.set("user.logout", logout_url);

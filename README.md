@@ -3,7 +3,7 @@ Standalone VK music player
 
 [![Build Status](https://travis-ci.org/uenify/musician.svg?branch=master)](https://travis-ci.org/uenify/musician.svg?branch=master)
 
-![Screenshots (macOS and Windows)](https://uenify.com/musician/banner.png)
+![Screenshots (macOS and Windows)](http://uenify.com/musician/banner.png)
 
 [Download the latest release](https://github.com/uenify/musician/releases)
 

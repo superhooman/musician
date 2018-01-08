@@ -14,7 +14,8 @@
     }
   },
   "scripts": {
-    "dev": "webpack",
+    "dev": "webpack --watch",
+    "build": "webpack",
     "distwin32": "build --win --ia32",
     "distwin": "build --win",
     "start": "electron .",
@@ -39,6 +40,7 @@
   "dependencies": {
     "electron-context-menu": "^0.9.1",
     "electron-settings": "^3.1.4",
+    "node-notifier": "^5.1.2",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-sortable-hoc": "^0.6.8",
