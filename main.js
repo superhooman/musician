@@ -1,5 +1,7 @@
+
 // Basic init
 const electron = require('electron')
+const { join } = require('path')
 const {
   app,
   BrowserWindow,
@@ -36,11 +38,11 @@ app.on('ready', () => {
     autoHideMenuBar: true,
     frame: platform !== 'win32',
     backgroundColor: settings.has('settings.theme')? getcolor(settings.get('settings.theme')) : '#ffffff',
+    icon: platform === 'win32'? join(__dirname, 'app/img/logo.ico') : join(__dirname, 'app/img/logo.icns'),
     titleBarStyle: "hiddenInset",
     minWidth: 390,
     minHeight: 450
   });
-
 
 
   mainWindow.loadURL('file://' + __dirname + '/app/index.html?platform=' + platform)

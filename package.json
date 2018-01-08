@@ -1,13 +1,16 @@
 {
   "name": "musician",
-  "version": "1.3.0",
+  "version": "1.5.0",
   "description": "Lightweight VK music player.",
   "main": "main.js",
   "build": {
     "appId": "com.uenify.musician",
     "win": {
       "target": "msi",
-      "icon": "app/build/logo.ico"
+      "icon": "app/img/logo.ico"
+    },
+    "mac": {
+      "icon": "app/img/logo.icns"
     }
   },
   "scripts": {
