@@ -5,8 +5,9 @@
   "main": "main.js",
   "build": {
     "appId": "com.uenify.musician",
+    "asar": "false",
     "win": {
-      "target": "msi",
+      "target": "nsis",
       "icon": "app/img/logo.ico"
     },
     "mac": {
