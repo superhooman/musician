@@ -37,15 +37,8 @@ class Login extends Component {
   render() {
     return (
       <div id="splash" className="screen">
-        <div className="login_logo">
-          <div id="logo">
-            <img src={logo} className="App-logo" alt="logo" />
-          </div>
-        </div>
-        <div className="login_main">
-          <div className="login_title">
-            <h1>Musician</h1>
-            <form noValidate action="javascript:void(0)" onSubmit={this.login.bind(this)}>
+        <div className="login-cont">
+        <form noValidate action="javascript:void(0)" onSubmit={this.login.bind(this)}>
               <input type="text" name="email" placeholder="Почта или номер" />
               <br />
               <input type="password" placeholder="••••••" name="pass" />
@@ -57,7 +50,6 @@ class Login extends Component {
                 value="Войти"
               />
             </form>
-          </div>
         </div>
       </div>
     );

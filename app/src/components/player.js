@@ -31,12 +31,13 @@ class Player extends Component {
 
     this.playpause = this.playpause.bind(this);
     this.loop = this.loop.bind(this);
+    this.delete_audio = this.delete_audio.bind(this)
   }
 
   componentWillMount() {
     player = new Audio();
-    player.src = music[0].src;
-    music[0].selected = true;
+    player.src = this.state.music[0].src;
+    this.state.music[0].selected = true;
     player.addEventListener("timeupdate", () => {
       var buffered = player.buffered;
       var loaded;
@@ -186,6 +187,25 @@ class Player extends Component {
     });
   }
 
+  delete_audio(index){
+    var buff = this.state.music
+    if(index !== current){
+      if(index > current){
+        buff.splice(index, 1)
+      }else{
+        current = current - 1
+        buff.splice(index, 1)
+      }
+    }else{
+      this.next()
+      current = current - 1
+      buff.splice(index, 1)
+    }
+    this.setState({
+      music: buff
+    })
+  }
+
   render() {
     return (
       <div id="Music" className="screen">
@@ -285,7 +305,7 @@ class Player extends Component {
                 className="list"
                 lockAxis="y"
                 lockToContainerEdges={true}
-                height={window.innerHeight - 133}
+                height={window.innerHeight - 146}
                 width={width}
                 onSortStart={() => {
                   document.body.classList.add("grabbing");
@@ -335,9 +355,14 @@ class Player extends Component {
                           </div>
                           <footer>
                             <ul>
-                              <li>Скачать</li>
-                              <li>Восп. след.</li>
-                              <li>Удалить</li>
+                              <li><a download={this.state.music[index].artist + ' - ' + this.state.music[index].title + '.mp3'} href={this.state.music[index].src}>Скачать</a></li>
+                              {index === current || index === current + 1 ? '':
+                              (<li onClick={()=>{
+                                this.reorder({oldIndex: index, newIndex: current + 1})
+                              }}>Восп. след.</li>)}
+                              <li onClick={()=>{
+                                this.delete_audio(index)
+                              }}>Удалить</li>
                             </ul>
                           </footer>
                         </div>
