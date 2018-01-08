@@ -9,4 +9,4 @@ render(
 )
 
 document.body.classList.add(platform())
-document.body.classList.add(settings.has('settings.theme') ? settings.get('settings.theme') : 'dark')
+document.body.classList.add(settings.has('settings.theme') ? settings.get('settings.theme') : 'white')

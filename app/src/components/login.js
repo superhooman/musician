@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import logo from "../assets/logo.svg";
-
+const {shell} = require('electron')
 
 class Login extends Component {
   constructor(props){
@@ -50,6 +50,11 @@ class Login extends Component {
                 value="Войти"
               />
             </form>
+        </div>
+        <div className="bottom">
+          <a onClick={()=>{
+            shell.openExternal('https://github.com/uenify/musician')
+          }}>GitHub</a>
         </div>
       </div>
     );

@@ -16,13 +16,13 @@ const getcolor = (theme) => {
       return '#ffffff'
       break
     default:
-      return '#000000'
+      return '#ffffff'
       break    
   }
 }
 
 // Let electron reloads by itself when webpack watches changes in ./app/
-require('electron-reload')(__dirname)
+//require('electron-reload')(__dirname)
 
 
 var platform = process.platform
@@ -35,24 +35,13 @@ app.on('ready', () => {
     resizable: true,
     autoHideMenuBar: true,
     frame: platform !== 'win32',
-    backgroundColor: settings.has('settings.theme')? getcolor(settings.get('settings.theme')) : '#000000',
+    backgroundColor: settings.has('settings.theme')? getcolor(settings.get('settings.theme')) : '#ffffff',
     titleBarStyle: "hiddenInset",
     minWidth: 390,
     minHeight: 450
   });
 
 
-  require('electron-context-menu')({
-    showInspectElement: false,
-    prepend: (params, browserWindow) => {
-      console.log(params)
-      return([{
-        label: 'Rainbow',
-        // Only show it when right-clicking images 
-        visible: params.y > 132
-    }])
-    }
-});
 
   mainWindow.loadURL('file://' + __dirname + '/app/index.html?platform=' + platform)
   globalShortcut.register("MediaPlayPause", () =>
