@@ -13,8 +13,8 @@ To run it locally on your own computer:
 * [Clone](https://help.github.com/articles/cloning-a-repository/) it to your
   local device
 * [Install](https://yarnpkg.com/en/docs/cli/install) the dependencies
-* [Run](https://github.com/bukinoshita/taskr/blob/master/package.json#L10) the
-  project
+* [Run Webpack](https://github.com/uenify/musician/blob/master/package.json#L17)
+* [Run Electron](https://github.com/uenify/musician/blob/master/package.json#L20)
 
 ## Warning
 It uses direct login to VK (No API)
