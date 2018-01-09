@@ -1,6 +1,9 @@
 # Webpack
 app/build
 
+#Notifier
+Musician.app
+
 # Logs
 logs
 *.log

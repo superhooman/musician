@@ -9,7 +9,7 @@ const {
 } = electron;
 const settings = require("electron-settings");
 const ipc = require('electron').ipcMain
-const notifier = require('node-notifier');
+let notifier 
 const getcolor = (theme) => {
   switch(theme){
     case 'dark':
@@ -29,6 +29,18 @@ const getcolor = (theme) => {
 
 
 var platform = process.platform
+
+if(platform === 'darwin'){
+  const NotificationCenter = require('node-notifier').NotificationCenter;
+  notifier = new NotificationCenter({
+    customPath: join(
+      __dirname,
+      'Musician.app/Contents/MacOS/Musician'
+    ),
+  });
+}else{
+  notifier = require('node-notifier');
+}
 
 app.on('ready', () => {
 

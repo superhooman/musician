@@ -12,10 +12,19 @@ import { join } from "path";
 
 const { remote } = require("electron");
 const ipc = require('electron').ipcRenderer
+const {shell} = require('electron')
 const SortableList = SortableContainer(List, { withRef: true });
 const SortableRow = SortableElement(({ children }) => children);
 const DragHandle = SortableHandle(() => <span className="draghandle">=</span>);
-
+var version = require('version');
+var ver
+version.fetch(function(error, version) {
+  if (error) {
+    ver = 'unkwn'
+  } else {
+    ver = version
+  };
+});
 /*
 <div id="playlists">
   <div className="playlist color-main">Основной</div>
@@ -271,6 +280,15 @@ class Player extends Component {
               } className="settings-item">
                 <h2 className="item-name">Уведомления</h2><div className="item-set">{this.state.notify ? 'Вкл' : 'Выкл'}</div>
               </div>
+              <div className="bottom">
+                <a onClick={()=>{
+                  shell.openExternal('https://github.com/uenify/musician/releases')
+                }}>{ver}</a>
+                <span> • </span>
+                <a onClick={()=>{
+                  shell.openExternal('https://github.com/uenify/musician')
+                }}>GitHub</a>
+        </div>
             </div>
           </div>
         ) : ''}
@@ -424,7 +442,7 @@ class Player extends Component {
                           </div>
                           <footer>
                             <ul>
-                              <li><a download={this.state.music[index].artist + ' - ' + this.state.music[index].title + '.mp3'} href={this.state.music[index].src}>Скачать</a></li>
+                              <li><a download={this.state.music[index].artist + ' - ' + this.state.music[index].title + '.mp3'} type='audio/mpeg' href={this.state.music[index].src}>Скачать</a></li>
                               {index === current || index === current + 1 ? '' :
                                 (<li onClick={() => {
                                   this.reorder({ oldIndex: index, newIndex: current + 1 })
