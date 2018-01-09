@@ -4,6 +4,8 @@ app/build
 # Logs
 logs
 *.log
+*.lock
+package-lock.json
 npm-debug.log*
 
 # Runtime data

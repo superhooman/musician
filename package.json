@@ -5,8 +5,9 @@
   "main": "main.js",
   "build": {
     "appId": "com.uenify.musician",
+    "asar": "false",
     "win": {
-      "target": "msi",
+      "target": "nsis",
       "icon": "app/img/logo.ico"
     },
     "mac": {
@@ -25,7 +26,6 @@
   "repository": "uenify/musician",
   "license": "MIT",
   "devDependencies": {
-    "7zip-bin-win": "^2.1.1",
     "babel-core": "^6.23.1",
     "babel-loader": "^6.3.2",
     "babel-preset-react": "^6.23.0",
