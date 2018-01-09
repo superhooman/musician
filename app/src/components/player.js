@@ -11,10 +11,10 @@ import { join } from "path";
 
 
 const { remote } = require("electron");
+const ipc = require('electron').ipcRenderer
 const SortableList = SortableContainer(List, { withRef: true });
 const SortableRow = SortableElement(({ children }) => children);
 const DragHandle = SortableHandle(() => <span className="draghandle">=</span>);
-const notifier = require('node-notifier');
 
 /*
 <div id="playlists">
@@ -137,11 +137,10 @@ class Player extends Component {
   }
 
   notify(){
-    notifier.notify({
-      'title': this.state.music[current].title,
-      'message': this.state.music[current].artist,
-      'sound': false
-    });
+    ipc.send('asynchronous-message', {
+      title: this.state.music[current].title,
+      artist: this.state.music[current].artist
+    })
   }
 
   loop() {

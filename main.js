@@ -8,7 +8,8 @@ const {
   globalShortcut
 } = electron;
 const settings = require("electron-settings");
-
+const ipc = require('electron').ipcMain
+const notifier = require('node-notifier');
 const getcolor = (theme) => {
   switch(theme){
     case 'dark':
@@ -44,6 +45,14 @@ app.on('ready', () => {
     minHeight: 450
   });
 
+  ipc.on('asynchronous-message', (event, arg) =>{
+    notifier.notify({
+      'title': arg.title,
+      'message': arg.artist,
+      'sound': false
+    });
+  })
+
 
   mainWindow.loadURL('file://' + __dirname + '/app/index.html?platform=' + platform)
   globalShortcut.register("MediaPlayPause", () =>
@@ -66,5 +75,6 @@ app.on('ready', () => {
     path = undefined;
   `);*/
 })
+
 
 app.on('window-all-closed', app.quit)
