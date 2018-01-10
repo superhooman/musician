@@ -792,9 +792,79 @@ footer li{
   max-width: 200px;
   box-sizing: border-box;
   font-size: 16px;
-  color: white;
-  background-color: #ff0000;
+  margin-bottom: 16px;
+  border-radius: 3px;
   padding: 9px 16px;
+  animation: error .2s ease-in-out;
+}
+.dark .error{
+  color: #a58282;
+  background-color: #521313;
+}
+.white .error{
+  color: white;
+  background-color: #d46060;
+}
+.loader{
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: 200;
+  animation: loader-show 0.2s ease-in;
+}
+.dark .loader{
+  background-color: #000000;
+}
+.white .loader{
+  background-color: #ffffff;
+}
+.loader::after{
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  box-sizing: border-box;
+  margin-top: -25px;
+  margin-left: -25px;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  animation: rotate 1s linear infinite;
+}
+.dark .loader::after{
+  border: 5px #292929 solid;
+  border-top: 5px #ffffff solid;
+}
+.white .loader::after{
+  border: 5px #525252 solid;
+  border-top: 5px #000000 solid;
+}
+@keyframes error{
+  from{
+    margin-top: -97px;
+    transform: scaleY(0)
+  }
+  to{
+    margin-top: 0px;
+    transform: scaleY(1)
+  }
+}
+@keyframes loader-show{
+  from{
+    opacity: 0;
+  }
+  to{
+    opacity: 1;
+  }
+}
+@keyframes rotate{
+  from{
+    transform: rotate(0deg)
+  }
+  to{
+    transform: rotate(359deg)
+  }
 }
 form{
   max-width: 200px;

@@ -90,24 +90,4 @@ export default class App extends Component {
     }
 }
 
-const ajax = (url, callback, type) => {
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() {
-      if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-        switch (type) {
-          case "json":
-            var data = eval("(" + xmlHttp.responseText + ")");
-            callback(data);
-            break;
-          case "text":
-            callback(xmlHttp.responseText);
-            break;
-          default:
-            callback(xmlHttp.responseText);
-        }
-      }
-    };
-    xmlHttp.open("POST", url, true); // true for asynchronous
-    xmlHttp.send(null);
-  };
 

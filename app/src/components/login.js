@@ -9,12 +9,14 @@ class Login extends Component {
       code: false,
       link: null,
       code_text: '',
+      loading: false,
       error: {
         active: false,
         text: ''
       }
     }
-    this.authorize = this.authorize.bind(this)
+    this.authorize = this.authorize.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
   login() {
     var form = document.querySelector(".login-form");
@@ -26,8 +28,12 @@ class Login extends Component {
         comp.authorize(this.responseText)
       }
     };
+    this.setState({
+      loading: true
+    })
     xmlHttp.open("POST", vk, true); // true for asynchronous
     xmlHttp.send(data);
+    
   }
   handleChange(event) {
     this.setState({code_text: event.target.value});
@@ -42,6 +48,9 @@ class Login extends Component {
         comp.authorize(this.responseText)
       }
     };
+    this.setState({
+      loading: true
+    })
     xmlHttp.open("POST", "https://m.vk.com" + this.state.link, true);
     xmlHttp.send(data);
   }
@@ -65,18 +74,27 @@ class Login extends Component {
         } else {
           var link = responseText.split('action="')[1].split('"')[0];
           this.setState({
+            loading: false,
             code: true,
             link: link
           })
         }
       } else {
-        remote.BrowserWindow.getFocusedWindow().webContents.session.clearStorageData();
         this.setState({
+          loading: false,
           error: {
             active: true,
             text: 'Неверный пароль, либо ошибка на сервере'
           }
         })
+        remote.BrowserWindow.getFocusedWindow().webContents.session.clearStorageData();
+        ajax(
+          "https://m.vk.com/login",
+          e => {
+            vk = e.split('action="')[1].split('"')[0];
+          },
+          "text"
+        );
       }
   }
   render() {
@@ -128,6 +146,7 @@ class Login extends Component {
             GitHub
           </a>
         </div>
+        {this.state.loading ? (<div className="loader"/>):''}
       </div>
     );
   }
