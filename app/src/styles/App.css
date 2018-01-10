@@ -788,3 +788,14 @@ footer li{
   font-size: 16px;
   text-transform: capitalize;
 }
+.error{
+  max-width: 200px;
+  box-sizing: border-box;
+  font-size: 16px;
+  color: white;
+  background-color: #ff0000;
+  padding: 9px 16px;
+}
+form{
+  max-width: 200px;
+}

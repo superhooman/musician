@@ -193,6 +193,7 @@ class Player extends Component {
       if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
         settings.delete('music');
         settings.delete('user');
+        remote.BrowserWindow.getFocusedWindow().webContents.session.clearStorageData()
         remote.app.relaunch();
         remote.app.exit(0);
       }
