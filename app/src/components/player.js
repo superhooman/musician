@@ -16,15 +16,6 @@ const {shell} = require('electron')
 const SortableList = SortableContainer(List, { withRef: true });
 const SortableRow = SortableElement(({ children }) => children);
 const DragHandle = SortableHandle(() => <span className="draghandle">=</span>);
-var version = require('version');
-var ver
-version.fetch(function(error, version) {
-  if (error) {
-    ver = 'unkwn'
-  } else {
-    ver = version
-  };
-});
 /*
 <div id="playlists">
   <div className="playlist color-main">Основной</div>
@@ -283,8 +274,8 @@ class Player extends Component {
               </div>
               <div className="bottom">
                 <a onClick={()=>{
-                  shell.openExternal('https://github.com/uenify/musician/releases')
-                }}>{ver}</a>
+                  shell.openExternal('https://uenify.com/')
+                }}>Автор</a>
                 <span> • </span>
                 <a onClick={()=>{
                   shell.openExternal('https://github.com/uenify/musician')

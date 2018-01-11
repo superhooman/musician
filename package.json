@@ -5,9 +5,8 @@
   "main": "main.js",
   "build": {
     "appId": "com.uenify.musician",
-    "asar": "false",
     "win": {
-      "target": "msi",
+      "target": "nsis",
       "icon": "app/img/logo.ico"
     },
     "mac": {
@@ -46,7 +45,6 @@
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-sortable-hoc": "^0.6.8",
-    "react-virtualized": "^9.15.0",
-    "version": "^0.1.2"
+    "react-virtualized": "^9.15.0"
   }
 }
