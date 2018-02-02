@@ -10,6 +10,10 @@ class Login extends Component {
       link: null,
       code_text: '',
       loading: false,
+      captcha: {
+        active: false,
+        sid: ''
+      },
       error: {
         active: false,
         text: ''
@@ -80,21 +84,32 @@ class Login extends Component {
           })
         }
       } else {
-        this.setState({
-          loading: false,
-          error: {
-            active: true,
-            text: 'Неверный пароль, либо ошибка на сервере'
-          }
-        })
-        remote.BrowserWindow.getFocusedWindow().webContents.session.clearStorageData();
-        ajax(
-          "https://m.vk.com/login",
-          e => {
-            vk = e.split('action="')[1].split('"')[0];
-          },
-          "text"
-        );
+        if (responseText.search("sid=") == -1){
+          console.log(responseText.search("sid="))
+          this.setState({
+            loading: false,
+            error: {
+              active: true,
+              text: 'Неверный пароль, либо ошибка на сервере'
+            }
+          })
+          remote.BrowserWindow.getFocusedWindow().webContents.session.clearStorageData();
+          ajax(
+            "https://m.vk.com/login",
+            e => {
+              vk = e.split('action="')[1].split('"')[0];
+            },
+            "text"
+          );
+        }else{
+          var sid = responseText.split('sid=')[1].split('"')[0]
+          this.setState({
+            captcha: {
+              active: true,
+              sid: sid
+            }
+          })
+        }
       }
   }
   render() {
@@ -128,6 +143,13 @@ class Login extends Component {
               <br />
               <input type="password" placeholder="••••••" name="pass" />
               <br />
+              {this.state.captcha.active ? (
+                <div>
+                  <img src={"https://m.vk.com/captcha.php?s=0&sid="+ this.state.captcha.sid} id="captcha" class="captcha" />
+                  <input type="hidden" name="captcha_sid" value={ this.state.captcha.sid } />
+                  <input type="text" placeholder="Код с картинки" name="captcha_key" />
+                </div>
+              ):''}
               <input
                 type="submit"
                 className="button vk"
