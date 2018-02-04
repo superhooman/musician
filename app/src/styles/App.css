@@ -754,7 +754,6 @@ footer li{
   height: 24px;
   width: 24px;
   float: right;
-  display: inline-block;
 }
 .dark .close{
   background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiI+CiAgICA8cGF0aCBkPSJNMTIgMzAgTDI0IDE2IDEyIDIiIC8+Cjwvc3ZnPg==);

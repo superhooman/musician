@@ -85,7 +85,6 @@ class Login extends Component {
         }
       } else {
         if (responseText.search("sid=") == -1){
-          console.log(responseText.search("sid="))
           this.setState({
             loading: false,
             error: {
@@ -102,8 +101,11 @@ class Login extends Component {
             "text"
           );
         }else{
+          var link = responseText.split('action="')[1].split('"')[0];
           var sid = responseText.split('sid=')[1].split('"')[0]
           this.setState({
+            loading: false,
+            link: link,
             captcha: {
               active: true,
               sid: sid
@@ -145,7 +147,7 @@ class Login extends Component {
               <br />
               {this.state.captcha.active ? (
                 <div>
-                  <img src={"https://m.vk.com/captcha.php?s=0&sid="+ this.state.captcha.sid} id="captcha" class="captcha" />
+                  <img src={"https://m.vk.com/captcha.php?s=0&sid="+ this.state.captcha.sid} id="captcha" className="captcha" />
                   <input type="hidden" name="captcha_sid" value={ this.state.captcha.sid } />
                   <input type="text" placeholder="Код с картинки" name="captcha_key" />
                 </div>
