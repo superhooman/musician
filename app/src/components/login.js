@@ -25,6 +25,7 @@ class Login extends Component {
   login() {
       const modalPath = join("file://", __dirname, "/app/login.html");
       let win = new remote.BrowserWindow({
+        autoHideMenuBar: true,
         minWidth: 660,
         minHeight: 420,
         width: 660,
@@ -50,26 +51,23 @@ class Login extends Component {
         "https://oauth.vk.com/authorize?client_id=4831307&scope=offline,audio&display=popup&redirect_uri=https://oauth.vk.com/blank.html&response_type=token"
       );
   }
-  logout(){
-    remote.BrowserWindow.fromId(1).webContents.session.clearStorageData(() => {
-      remote.app.relaunch()
-      remote.app.exit(0)
-    });
-  };
   handleChange(event) {
     this.setState({code_text: event.target.value});
   }
-  authorize(responseText){
-    ajax('https://api.vk.com/users.get?user_ids=' + uid + '&fields=photo_100', console.log ,'json')
-          var photo = responseText
-            .split('data-photo="')[1]
-            .split('"')[0];
+  authorize(){
+      var xmlHttp = new XMLHttpRequest();
+      xmlHttp.onreadystatechange = function () {
+          if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+            var data = eval("(" + xmlHttp.responseText + ")");
+            settings.set('user.photo', data.response[0].photo_50)
+          }
+        }
+      xmlHttp.open("POST", 'https://api.vk.com/method/users.get?user_ids=' + uid + '&fields=photo_50', true);
+      xmlHttp.send(null);
           var time = new Date();
-          settings.set("user.photo", photo);
           settings.set("user.date", time);
           settings.set("user.id", uid);
-          settings.set("user.logout", logout_url);
-          getaudio(-1, done);
+          getaudio(-1, this.props.ondone);
   }
   render() {
     return (

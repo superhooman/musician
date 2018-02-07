@@ -189,6 +189,7 @@ a:visited{
 
 .button.vk {
   display: inline-block;
+  min-width: 200px;
   height: 36px;
   border: none;
   width: 100%;

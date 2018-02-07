@@ -179,18 +179,12 @@ class Player extends Component {
     });
   }
   logout() {
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function () {
-      if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-        settings.delete('music');
-        settings.delete('user');
-        remote.BrowserWindow.getFocusedWindow().webContents.session.clearStorageData()
-        remote.app.relaunch();
-        remote.app.exit(0);
-      }
-    };
-    xmlHttp.open("GET", settings.get("user.logout"), true); // true for asynchronous
-    xmlHttp.send(null);
+    remote.BrowserWindow.fromId(1).webContents.session.clearStorageData(() => {
+      settings.delete('music');
+      settings.delete('user');
+      remote.app.relaunch()
+      remote.app.exit(0)
+    });
   }
 
   reorder({ oldIndex, newIndex }) {
