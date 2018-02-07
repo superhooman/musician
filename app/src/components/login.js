@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import logo from "../assets/logo.svg";
-const { shell } = require("electron");
-const { remote } = require("electron");
+const { join } = require('path')
+const { shell, remote } = require("electron");
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -23,143 +23,66 @@ class Login extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
   login() {
-    var form = document.querySelector(".login-form");
-    var data = new FormData(form);
-    var comp = this
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() {
-      if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-        comp.authorize(this.responseText)
-      }
-    };
-    this.setState({
-      loading: true
-    })
-    xmlHttp.open("POST", vk, true); // true for asynchronous
-    xmlHttp.send(data);
-    
+      const modalPath = join("file://", __dirname, "/app/login.html");
+      let win = new remote.BrowserWindow({
+        minWidth: 660,
+        minHeight: 420,
+        width: 660,
+        height: 420
+      });
+      let contents = win.webContents;
+      win.on("close", () => {
+        win = null;
+      });
+      win.webContents.on("did-navigate", (event, url) => {
+        var urlcheck = url.split("#");
+        if (urlcheck[0] == "https://oauth.vk.com/blank.html") {
+          var i = url.indexOf("access_token=");
+          var i2 = url.indexOf("&");
+          token = url.substr(i + 13, i2 - i - 13);
+          var i3 = url.indexOf("user_id=");
+          uid = url.substr(i3 + 8);
+          this.authorize()
+          win.close();
+        }
+      });
+      win.loadURL(
+        "https://oauth.vk.com/authorize?client_id=4831307&scope=offline,audio&display=popup&redirect_uri=https://oauth.vk.com/blank.html&response_type=token"
+      );
   }
+  logout(){
+    remote.BrowserWindow.fromId(1).webContents.session.clearStorageData(() => {
+      remote.app.relaunch()
+      remote.app.exit(0)
+    });
+  };
   handleChange(event) {
     this.setState({code_text: event.target.value});
   }
-  insertCode(){
-    var form = document.querySelector(".code-form");
-    var data = new FormData(form);
-    var xmlHttp = new XMLHttpRequest();
-    var comp = this
-    xmlHttp.onreadystatechange = function() {
-      if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-        comp.authorize(this.responseText)
-      }
-    };
-    this.setState({
-      loading: true
-    })
-    xmlHttp.open("POST", "https://m.vk.com" + this.state.link, true);
-    xmlHttp.send(data);
-  }
   authorize(responseText){
-    var done = this.props.ondone;
-      if (responseText.search("/restore") == -1) {
-        if (responseText.search("authcheck_code") == -1) {
-          uid = responseText.split("pid=")[1].split(";")[0];
+    ajax('https://api.vk.com/users.get?user_ids=' + uid + '&fields=photo_100', console.log ,'json')
           var photo = responseText
             .split('data-photo="')[1]
             .split('"')[0];
-          var logout_url =
-            "https://login.vk.com/" +
-            responseText.split("https://login.vk.com/")[1].split('"')[0];
           var time = new Date();
           settings.set("user.photo", photo);
           settings.set("user.date", time);
           settings.set("user.id", uid);
           settings.set("user.logout", logout_url);
           getaudio(-1, done);
-        } else {
-          var link = responseText.split('action="')[1].split('"')[0];
-          this.setState({
-            loading: false,
-            code: true,
-            link: link
-          })
-        }
-      } else {
-        if (responseText.search("sid=") == -1){
-          this.setState({
-            loading: false,
-            error: {
-              active: true,
-              text: 'Неверный пароль, либо ошибка на сервере'
-            }
-          })
-          remote.BrowserWindow.getFocusedWindow().webContents.session.clearStorageData();
-          ajax(
-            "https://m.vk.com/login",
-            e => {
-              vk = e.split('action="')[1].split('"')[0];
-            },
-            "text"
-          );
-        }else{
-          var link = responseText.split('action="')[1].split('"')[0];
-          var sid = responseText.split('sid=')[1].split('"')[0]
-          this.setState({
-            loading: false,
-            link: link,
-            captcha: {
-              active: true,
-              sid: sid
-            }
-          })
-        }
-      }
   }
   render() {
     return (
       <div id="splash" className="screen">
         <div className="login-cont">
           {this.state.error.active ? (<div className="error">{this.state.error.text}</div>):''}
-          {this.state.code ? (
-            <form
-              className="code-form"
-              noValidate
-              action="javascript:void(0)"
-              onSubmit={this.insertCode.bind(this)}
-            >
-              <input type="text" name="code" value={this.state.code_text} onChange={this.handleChange} placeholder="Код" />
               <input
+              onClick={this.login.bind(this)}
                 type="submit"
                 className="button vk"
                 id="login_button"
                 value="Войти"
               />
-            </form>
-          ) : (
-            <form
-              className="login-form"
-              noValidate
-              action="javascript:void(0)"
-              onSubmit={this.login.bind(this)}
-            >
-              <input type="text" name="email" placeholder="Почта или номер" />
-              <br />
-              <input type="password" placeholder="••••••" name="pass" />
-              <br />
-              {this.state.captcha.active ? (
-                <div>
-                  <img src={"https://m.vk.com/captcha.php?s=0&sid="+ this.state.captcha.sid} id="captcha" className="captcha" />
-                  <input type="hidden" name="captcha_sid" value={ this.state.captcha.sid } />
-                  <input type="text" placeholder="Код с картинки" name="captcha_key" />
-                </div>
-              ):''}
-              <input
-                type="submit"
-                className="button vk"
-                id="login_button"
-                value="Войти"
-              />
-            </form>
-          )}
         </div>
         <div className="bottom">
           <a

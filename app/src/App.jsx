@@ -28,14 +28,6 @@ export default class App extends Component {
       }else{
         getaudio(-1, this.createplayer)
       }
-    } else {
-      ajax(
-        "https://m.vk.com/login",
-        e => {
-          vk = e.split('action="')[1].split('"')[0];
-        },
-        "text"
-      );
     }
     remote.BrowserWindow.getFocusedWindow().addListener('maximize', ()=>{
       this.setState({maximized: true})
