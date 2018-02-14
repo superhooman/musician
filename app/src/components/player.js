@@ -29,6 +29,7 @@ class Player extends Component {
       scrubber: 0,
       loaded: 0,
       loop: false,
+      random: false,
       music: music,
       menu: false,
       settings: false,
@@ -117,14 +118,22 @@ class Player extends Component {
   next() {
     if (current == this.state.music.length - 1) {
       this.state.music[current].selected = false;
-      current = 0;
+      if (this.state.random){
+        current = Math.floor(this.state.music.length * Math.random())
+      }else{
+        current = 0;
+      }
       player.src = this.state.music[current].src;
       this.state.music[current].selected = true;
       player.play();
       this.refs.play.classList.add("pause");
     } else {
       this.state.music[current].selected = false;
-      current++;
+      if (this.state.random){
+        current = Math.floor(this.state.music.length * Math.random())
+      }else{
+        current++;
+      }
       player.src = this.state.music[current].src;
       this.state.music[current].selected = true;
       player.play();
@@ -150,6 +159,12 @@ class Player extends Component {
     });
   }
 
+  random(){
+    this.setState({
+      random: this.state.random ? false : true
+    })
+  }
+
   scrubber() {
     this.setState({
       scrubber: parseFloat(this.refs.scrubber.value)
@@ -164,7 +179,11 @@ class Player extends Component {
       this.refs.play.classList.add("pause");
     } else {
       this.state.music[current].selected = false;
-      current = current - 1;
+      if (this.state.random){
+        current = Math.floor(this.state.music.length * Math.random())
+      }else{
+        current = current - 1;
+      }
       player.src = this.state.music[current].src;
       this.state.music[current].selected = true;
       player.play();
@@ -330,7 +349,7 @@ class Player extends Component {
             </div>
             <div
               onClick={this.loop}
-              className={this.state.loop ? "loop looped" : "loop"}
+              className={this.state.loop ? "toggle-btn active" : "toggle-btn"}
             >
               <svg
                 height="30px"
@@ -342,8 +361,25 @@ class Player extends Component {
                 <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
               </svg>
             </div>
+            <div
+              onClick={this.random.bind(this)}
+              className={this.state.random ?  "toggle-btn active" : "toggle-btn"}
+            >
+              <svg
+                height="30px"
+                version="1.1"
+                viewBox="-3 -3 30 30"
+                width="30px"
+              >
+                <circle />
+                  <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"></path>
+              </svg>
+            </div>
           </div>
-          <div className="scrubber-cont">
+          <div className="scrubber-cont" onMouseMove={(e)=>{
+            console.log(e.clientX - 183)
+          }}>
+            <div className="float">{this.state.timeOn}</div>
             <div className="scrubber-back line" />
             <div
               style={{ width: this.state.loaded + "%" }}

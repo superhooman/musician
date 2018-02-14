@@ -605,7 +605,7 @@ input[type=range]::-webkit-slider-thumb {
   background-color: transparent;
 }
 
-.loop svg circle {
+.toggle-btn svg circle {
   r: 0;
   cx: 12;
   fill-opacity: 0;
@@ -613,24 +613,46 @@ input[type=range]::-webkit-slider-thumb {
   transition: .2s ease-in-out;
 }
 
-.loop.looped svg circle {
-  r: 15;
+.toggle-btn svg path{
+  fill: #000000;
+  transition: .2s ease-in-out;
+}
+
+.dark .toggle-btn svg path{
+  fill: #ffffff
+}
+
+.dark .toggle-btn.active svg path{
+  fill: #000000
+}
+
+.toggle-btn.active svg path{
+  fill: #ffffff;
+}
+
+.dark .toggle-btn.active svg circle{
+  fill: #ffffff;
+}
+
+.toggle-btn.active svg circle {
+  r: 14;
   cx: 12;
-  fill-opacity: 0.3;
+  fill-opacity: 1;
   cy: 12;
 }
 
+
 .scrubber-cont {
-  width: calc(100% - 141px);
+  width: calc(100% - 165px);
   margin-left: 15px;
   position: relative;
 }
 
 .scrubber-cont .line {
   position: absolute;
-  height: 2px;
+  height: 5px;
   pointer-events: none;
-  top: 15px;
+  top: 12px;
 }
 
 .scrubber-back {
@@ -667,13 +689,14 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 .progress .dot {
-  width: 1px;
-  height: 12px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
   position: absolute;
   transform: none;
   transition: transform .2s, box-shadow .2s;
-  right: 0px;
-  top: -5px;
+  right: -2px;
+  top: -2px;
 }
 
 .dark .progress .dot{

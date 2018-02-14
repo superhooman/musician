@@ -50,6 +50,9 @@ class Login extends Component {
       win.loadURL(
         "https://oauth.vk.com/authorize?client_id=4831307&scope=offline,audio&display=popup&redirect_uri=https://oauth.vk.com/blank.html&response_type=token"
       );
+      this.setState({
+        loading: true
+      })
   }
   handleChange(event) {
     this.setState({code_text: event.target.value});
