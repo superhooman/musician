@@ -643,8 +643,8 @@ input[type=range]::-webkit-slider-thumb {
 
 
 .scrubber-cont {
-  width: calc(100% - 165px);
-  margin-left: 15px;
+  width: calc(100% - 160px);
+  margin-left: 10px;
   position: relative;
 }
 
@@ -891,4 +891,22 @@ footer li{
 }
 form{
   max-width: 200px;
+}
+
+.scrubber-cont:hover .float{
+  opacity: 1;
+  top: -14px;
+}
+
+.float{
+  opacity: 0;
+  top: -8px;
+  transition: opacity .2s ease-in-out, top .2s ease-in-out;
+  position: absolute;
+  font-size: 13px;
+  left: -16px;
+}
+
+.dark .float{
+  color: #ffffff;
 }

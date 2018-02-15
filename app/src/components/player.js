@@ -22,11 +22,28 @@ const DragHandle = SortableHandle(() => <span className="draghandle">=</span>);
 </div>
 */
 
+const pad2 = (num) => {
+  //Перевод однозначных в двухзначные
+  if (num < 10) num = "0" + num;
+  return num;
+}
+
+const sec2time = (seconds) => {
+  //Секунды в минуты:секунды
+  var m = Math.floor(seconds / 60);
+  var s = seconds % 60;
+  return pad2(m) + ":" + pad2(s);
+}
+
 class Player extends Component {
   constructor(props) {
     super(props);
     this.state = {
       scrubber: 0,
+      timeOn:{
+        time: sec2time(0),
+        position: 0
+      },
       loaded: 0,
       loop: false,
       random: false,
@@ -377,9 +394,16 @@ class Player extends Component {
             </div>
           </div>
           <div className="scrubber-cont" onMouseMove={(e)=>{
-            console.log(e.clientX - 183)
+            this.setState({
+              timeOn: {
+                time: sec2time(Math.floor(((e.clientX - 178) / e.currentTarget.offsetWidth) * player.duration)),
+                position: (e.clientX - 178)
+              }
+            })
           }}>
-            <div className="float">{this.state.timeOn}</div>
+            <div className="float" style={{
+              transform: 'translateX('+this.state.timeOn.position+'px)'
+            }}>{this.state.timeOn.time}</div>
             <div className="scrubber-back line" />
             <div
               style={{ width: this.state.loaded + "%" }}
