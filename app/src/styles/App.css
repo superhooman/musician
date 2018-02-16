@@ -650,6 +650,7 @@ input[type=range]::-webkit-slider-thumb {
 
 .scrubber-cont .line {
   position: absolute;
+  border-radius: 2.5px;
   height: 5px;
   pointer-events: none;
   top: 12px;
@@ -681,6 +682,10 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 .scrubber-cont:hover .progress .dot {
+  transform: scale(1.5);
+}
+
+.scrubber-cont.focused .progress .dot {
   transform: scale(1.5);
 }
 
@@ -893,20 +898,31 @@ form{
   max-width: 200px;
 }
 
-.scrubber-cont:hover .float{
+.float.active{
   opacity: 1;
-  top: -14px;
+  top: 94px;
 }
 
 .float{
   opacity: 0;
-  top: -8px;
+  top: 100px;
   transition: opacity .2s ease-in-out, top .2s ease-in-out;
   position: absolute;
   font-size: 13px;
-  left: -16px;
+  transform: translateX(calc(178px - 50%));
 }
 
 .dark .float{
   color: #ffffff;
+}
+
+.login-cont{
+  cursor: default;
+}
+
+.login-cont h1{
+  margin: 0
+}
+.login-cont p{
+  margin-top: 0;
 }

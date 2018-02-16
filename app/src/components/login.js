@@ -34,6 +34,9 @@ class Login extends Component {
       let contents = win.webContents;
       win.on("close", () => {
         win = null;
+        this.setState({
+          loading: false
+        })
       });
       win.webContents.on("did-navigate", (event, url) => {
         var urlcheck = url.split("#");
@@ -76,6 +79,8 @@ class Login extends Component {
     return (
       <div id="splash" className="screen">
         <div className="login-cont">
+          <h1>Musician</h1>
+          <p>Плеер для ВК</p>
           {this.state.error.active ? (<div className="error">{this.state.error.text}</div>):''}
               <input
               onClick={this.login.bind(this)}

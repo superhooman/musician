@@ -22,17 +22,10 @@ const DragHandle = SortableHandle(() => <span className="draghandle">=</span>);
 </div>
 */
 
-const pad2 = (num) => {
-  //Перевод однозначных в двухзначные
-  if (num < 10) num = "0" + num;
-  return num;
-}
-
 const sec2time = (seconds) => {
-  //Секунды в минуты:секунды
   var m = Math.floor(seconds / 60);
   var s = seconds % 60;
-  return pad2(m) + ":" + pad2(s);
+  return ((m < 10)? '0' + m : m) + ":" + ((s < 10)? '0' + s : s)
 }
 
 class Player extends Component {
@@ -44,6 +37,7 @@ class Player extends Component {
         time: sec2time(0),
         position: 0
       },
+      focused: false,
       loaded: 0,
       loop: false,
       random: false,
@@ -58,6 +52,12 @@ class Player extends Component {
     this.loop = this.loop.bind(this);
     this.delete_audio = this.delete_audio.bind(this)
     this.notify = this.notify.bind(this)
+    this.onMouseDown = this.onMouseDown.bind(this)
+    this.onMouseUp = this.onMouseUp.bind(this)
+    this.addDocumentMouseEvents = this.addDocumentMouseEvents.bind(this)
+    this.onChange = this.onChange.bind(this)
+    this.onMouseMove = this.onMouseMove.bind(this)
+    this.onEnd = this.onEnd.bind(this)
   }
 
   componentWillMount() {
@@ -96,6 +96,77 @@ class Player extends Component {
           this.prev();
       }
     });
+  }
+
+  componentDidMount(){
+    this.refs.scrubber.addEventListener('mousemove', (e)=>{
+      this.setState({
+        timeOn: {
+          time: sec2time(~~(((e.clientX - 178) / this.refs.scrubber.offsetWidth) * player.duration)),
+          position: (e.clientX - 178),
+          active: true
+        }
+      })
+    })
+    this.refs.scrubber.addEventListener('mouseout', ()=>{
+      this.setState({
+        timeOn: {
+          time: this.state.timeOn.time,
+          position: this.state.timeOn.position,
+          active: false
+        }
+      })
+    })
+  }
+
+  addDocumentMouseEvents() {
+    window.addEventListener('mousemove', this.onMouseMove);
+    window.addEventListener('mouseup', this.onEnd);
+  }
+
+  removeDocumentEvents() {
+    window.removeEventListener('mousemove', this.onMouseMove);
+    window.removeEventListener('mouseup', this.onEnd);
+  }
+
+  onMouseDown(e) {
+    this.pause()
+    this.dragOffset = e.target.getBoundingClientRect().left;
+    this.elementWidth = e.target.getBoundingClientRect().width;
+    this.removeDocumentEvents();
+    let position = e.clientX;
+    this.onChange(position)
+    this.addDocumentMouseEvents();
+    e.stopPropagation();
+    e.preventDefault();
+  }
+
+  onMouseUp(){
+    this.onEnd();
+  }
+
+  onEnd(){
+    this.removeDocumentEvents();
+    this.play()
+    this.setState({
+      focused: false
+    })
+  }
+
+  onMouseMove(e){
+    const position = e.clientX;
+    this.onChange(position)
+  }
+
+  onChange(value) {
+    var result = (value - this.dragOffset + 2) / this.elementWidth
+    if (result >= 0){
+      this.setState({
+        scrubber: result * 100,
+        focused: true
+      });
+      player.currentTime = result * player.duration;
+    }
   }
 
   playpause() {
@@ -182,13 +253,6 @@ class Player extends Component {
     })
   }
 
-  scrubber() {
-    this.setState({
-      scrubber: parseFloat(this.refs.scrubber.value)
-    });
-    player.currentTime = this.refs.scrubber.value / 100 * player.duration;
-  }
-
   prev() {
     if (current == 0) {
       player.currentTime = 0;
@@ -271,6 +335,9 @@ class Player extends Component {
   render() {
     return (
       <div id="Music" className="screen">
+        <div className={this.state.timeOn.active ? "float active" : "float"} style={{
+          left: this.state.timeOn.position + 'px'
+        }}>{this.state.timeOn.time}</div>
         {this.state.settings ? (
           <div className="settings-screen">
             <div className="header">
@@ -393,32 +460,14 @@ class Player extends Component {
               </svg>
             </div>
           </div>
-          <div className="scrubber-cont" onMouseMove={(e)=>{
-            this.setState({
-              timeOn: {
-                time: sec2time(Math.floor(((e.clientX - 178) / e.currentTarget.offsetWidth) * player.duration)),
-                position: (e.clientX - 178)
-              }
-            })
-          }}>
-            <div className="float" style={{
-              transform: 'translateX('+this.state.timeOn.position+'px)'
-            }}>{this.state.timeOn.time}</div>
+          <div ref="scrubber" 
+            onMouseDown={this.onMouseDown}
+            onMouseUp={this.onMouseUp} 
+            className={this.state.focused ? "scrubber-cont focused" : "scrubber-cont"}>
             <div className="scrubber-back line" />
             <div
               style={{ width: this.state.loaded + "%" }}
               className="loaded line"
-            />
-            <input
-              ref="scrubber"
-              type="range"
-              min="0"
-              max="100"
-              value={this.state.scrubber}
-              onMouseDown={this.pause.bind(this)}
-              onMouseUp={this.play.bind(this)}
-              onChange={this.scrubber.bind(this)}
-              step="any"
             />
             <div
               ref="progress"
@@ -491,7 +540,11 @@ class Player extends Component {
                               <li><a download={this.state.music[index].artist + ' - ' + this.state.music[index].title + '.mp3'} type='audio/mpeg' href={this.state.music[index].src}>Скачать</a></li>
                               {index === current || index === current + 1 ? '' :
                                 (<li onClick={() => {
-                                  this.reorder({ oldIndex: index, newIndex: current + 1 })
+                                  if(index > current){
+                                    this.reorder({ oldIndex: index, newIndex: current + 1 })
+                                  }else{
+                                    this.reorder({ oldIndex: index, newIndex: current })
+                                  }
                                 }}>Восп. след.</li>)}
                               <li onClick={() => {
                                 this.delete_audio(index)
