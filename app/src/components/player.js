@@ -12,7 +12,7 @@ import { join } from "path";
 
 const { remote } = require("electron");
 const ipc = require('electron').ipcRenderer
-const {shell} = require('electron')
+const { shell } = require('electron')
 const SortableList = SortableContainer(List, { withRef: true });
 const SortableRow = SortableElement(({ children }) => children);
 const DragHandle = SortableHandle(() => <span className="draghandle">=</span>);
@@ -25,7 +25,7 @@ const DragHandle = SortableHandle(() => <span className="draghandle">=</span>);
 const sec2time = (seconds) => {
   var m = Math.floor(seconds / 60);
   var s = seconds % 60;
-  return ((m < 10)? '0' + m : m) + ":" + ((s < 10)? '0' + s : s)
+  return ((m < 10) ? '0' + m : m) + ":" + ((s < 10) ? '0' + s : s)
 }
 
 class Player extends Component {
@@ -33,17 +33,21 @@ class Player extends Component {
     super(props);
     this.state = {
       scrubber: 0,
-      timeOn:{
+      playlists: [],
+      timeOn: {
         time: sec2time(0),
         position: 0
       },
+      pl: 0,
       focused: false,
       loaded: 0,
       loop: false,
+      loading: false,
       random: false,
-      music: music,
+      music: { 0: music },
+      mLength: music.length,
       menu: false,
-      settings: false,
+      screen: 'main',
       theme: settings.has('settings.theme') ? settings.get('settings.theme') : 'white',
       notify: settings.has('settings.notify') ? settings.get('settings.notify') : true
     };
@@ -62,8 +66,8 @@ class Player extends Component {
 
   componentWillMount() {
     player = new Audio();
-    player.src = this.state.music[0].src;
-    this.state.music[0].selected = true;
+    player.src = this.state.music[this.state.pl][0].src;
+    this.state.music[this.state.pl][0].selected = true;
     player.addEventListener("timeupdate", () => {
       var buffered = player.buffered;
       var loaded;
@@ -96,10 +100,31 @@ class Player extends Component {
           this.prev();
       }
     });
+    this.setState({
+      loading: true
+    })
+    var self = this
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "https://m.vk.com/audio?act=audio_playlists" + uid, true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.setRequestHeader("x-requested-with", "XMLHttpRequest");
+    xhr.onreadystatechange = function () {
+      if (this.readyState != 4) return;
+      var data = eval("(" + this.responseText + ")");
+      var pls = []
+      for (var i of data[3][1]) {
+        pls.push(data[3][0][i])
+      }
+      self.setState({
+        playlists: pls,
+        loading: false
+      })
+    }
+    xhr.send("_ajax=1&offset=0");
   }
 
-  componentDidMount(){
-    this.refs.scrubber.addEventListener('mousemove', (e)=>{
+  componentDidMount() {
+    this.refs.scrubber.addEventListener('mousemove', (e) => {
       this.setState({
         timeOn: {
           time: sec2time(~~(((e.clientX - 178) / this.refs.scrubber.offsetWidth) * player.duration)),
@@ -108,7 +133,7 @@ class Player extends Component {
         }
       })
     })
-    this.refs.scrubber.addEventListener('mouseout', ()=>{
+    this.refs.scrubber.addEventListener('mouseout', () => {
       this.setState({
         timeOn: {
           time: this.state.timeOn.time,
@@ -141,11 +166,11 @@ class Player extends Component {
     e.preventDefault();
   }
 
-  onMouseUp(){
+  onMouseUp() {
     this.onEnd();
   }
 
-  onEnd(){
+  onEnd() {
     this.removeDocumentEvents();
     this.play()
     this.setState({
@@ -153,14 +178,14 @@ class Player extends Component {
     })
   }
 
-  onMouseMove(e){
+  onMouseMove(e) {
     const position = e.clientX;
     this.onChange(position)
   }
 
   onChange(value) {
     var result = (value - this.dragOffset + 2) / this.elementWidth
-    if (result >= 0){
+    if (result >= 0) {
       this.setState({
         scrubber: result * 100,
         focused: true
@@ -192,11 +217,11 @@ class Player extends Component {
     if (i == current) {
       this.playpause();
     } else {
-      this.state.music[current].selected = false;
+      this.state.music[this.state.pl][current].selected = false;
       player.pause();
       current = i;
-      player.src = this.state.music[i].src;
-      this.state.music[current].selected = true;
+      player.src = this.state.music[this.state.pl][i].src;
+      this.state.music[this.state.pl][current].selected = true;
       player.play();
       this.refs.play.classList.add("pause");
     }
@@ -204,26 +229,26 @@ class Player extends Component {
   }
 
   next() {
-    if (current == this.state.music.length - 1) {
-      this.state.music[current].selected = false;
-      if (this.state.random){
-        current = Math.floor(this.state.music.length * Math.random())
-      }else{
+    if (current == this.state.music[this.state.pl].length - 1) {
+      this.state.music[this.state.pl][current].selected = false;
+      if (this.state.random) {
+        current = Math.floor(this.state.music[this.state.pl].length * Math.random())
+      } else {
         current = 0;
       }
-      player.src = this.state.music[current].src;
-      this.state.music[current].selected = true;
+      player.src = this.state.music[this.state.pl][current].src;
+      this.state.music[this.state.pl][current].selected = true;
       player.play();
       this.refs.play.classList.add("pause");
     } else {
-      this.state.music[current].selected = false;
-      if (this.state.random){
-        current = Math.floor(this.state.music.length * Math.random())
-      }else{
+      this.state.music[this.state.pl][current].selected = false;
+      if (this.state.random) {
+        current = Math.floor(this.state.music[this.state.pl].length * Math.random())
+      } else {
         current++;
       }
-      player.src = this.state.music[current].src;
-      this.state.music[current].selected = true;
+      player.src = this.state.music[this.state.pl][current].src;
+      this.state.music[this.state.pl][current].selected = true;
       player.play();
       this.refs.play.classList.add("pause");
     }
@@ -233,10 +258,70 @@ class Player extends Component {
     this.forceUpdate();
   }
 
-  notify(){
+  getPlaylist(id, index) {
+    if(this.state.music[index]){
+      this.state.music[this.state.pl][current].selected = false;
+      this.pause()
+      current = 0
+      player.src = this.state.music[index][0].src;
+      this.state.music[index][current].selected = true;
+      this.setState({
+        pl: index, 
+        screen: 'main'
+      })
+      return;
+    }
+    this.setState({
+      loading: true
+    })
+    var self = this
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "https://m.vk.com/audio?act=audio_playlist" + uid + "_" + id, true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.setRequestHeader("x-requested-with", "XMLHttpRequest");
+    xhr.onreadystatechange = function () {
+      if (this.readyState != 4) return;
+      var data = eval("(" + this.responseText + ")");
+      var el = document.createElement('html')
+      el.innerHTML = data[3][0]
+      var audios = el.getElementsByClassName('audio_item')
+      var result = []
+      for (var i = 0; i < audios.length; i++) {
+        var audio = document.createElement('div')
+        audio.innerHTML = audios[i].innerHTML
+        if (audio.innerHTML !== 'undefined') {
+          var track = {}
+          track.artist = audio.getElementsByClassName('ai_title')[0].innerHTML
+          track.title = audio.getElementsByClassName('ai_artist')[0].innerHTML
+          track.cover_css = audio.getElementsByClassName('ai_play')[0].attributes.style.value
+          track.duration = audio.getElementsByClassName('ai_dur')[0].attributes['data-dur'].value
+          track.selected = false
+          track.src = geturl(audio.getElementsByTagName('input')[0].value)
+          result.push(track)
+        }
+
+      }
+      var music = self.state.music
+      music[index] = result
+      self.state.music[self.state.pl][current].selected = false;
+      self.pause()
+      current = 0
+      player.src = self.state.music[index][0].src;
+      self.state.music[index][current].selected = true;
+      self.setState({
+        loading: false,
+        pl: index, 
+        screen: 'main',
+        music: music
+      })
+    }
+    xhr.send("_ajax=1&offset=0");
+  }
+
+  notify() {
     ipc.send('asynchronous-message', {
-      title: this.state.music[current].title,
-      artist: this.state.music[current].artist
+      title: this.state.music[this.state.pl][current].title,
+      artist: this.state.music[this.state.pl][current].artist
     })
   }
 
@@ -247,7 +332,7 @@ class Player extends Component {
     });
   }
 
-  random(){
+  random() {
     this.setState({
       random: this.state.random ? false : true
     })
@@ -259,14 +344,14 @@ class Player extends Component {
       player.play();
       this.refs.play.classList.add("pause");
     } else {
-      this.state.music[current].selected = false;
-      if (this.state.random){
-        current = Math.floor(this.state.music.length * Math.random())
-      }else{
+      this.state.music[this.state.pl][current].selected = false;
+      if (this.state.random) {
+        current = Math.floor(this.state.music[this.state.pl].length * Math.random())
+      } else {
         current = current - 1;
       }
-      player.src = this.state.music[current].src;
-      this.state.music[current].selected = true;
+      player.src = this.state.music[this.state.pl][current].src;
+      this.state.music[this.state.pl][current].selected = true;
       player.play();
       this.refs.play.classList.add("pause");
     }
@@ -279,7 +364,7 @@ class Player extends Component {
     });
   }
   logout() {
-    remote.BrowserWindow.fromId(1).webContents.session.clearStorageData(() => {
+    remote.getCurrentWindow().webContents.session.clearStorageData(() => {
       settings.delete('music');
       settings.delete('user');
       remote.app.relaunch()
@@ -296,8 +381,10 @@ class Player extends Component {
     } else if (oldIndex === current) {
       current = newIndex;
     }
+    var music = this.state.music
+    music[this.state.pl] = arrayMove(this.state.music[this.state.pl], oldIndex, newIndex)
     this.setState({
-      music: arrayMove(this.state.music, oldIndex, newIndex)
+      music: music
     });
   }
 
@@ -317,15 +404,15 @@ class Player extends Component {
     var buff = this.state.music
     if (index !== current) {
       if (index > current) {
-        buff.splice(index, 1)
+        buff[this.state.pl].splice(index, 1)
       } else {
         current = current - 1
-        buff.splice(index, 1)
+        buff[this.state.pl].splice(index, 1)
       }
     } else {
       this.next()
       current = current - 1
-      buff.splice(index, 1)
+      buff[this.state.pl].splice(index, 1)
     }
     this.setState({
       music: buff
@@ -335,16 +422,17 @@ class Player extends Component {
   render() {
     return (
       <div id="Music" className="screen">
+      
         <div className={this.state.timeOn.active ? "float active" : "float"} style={{
           left: this.state.timeOn.position + 'px'
         }}>{this.state.timeOn.time}</div>
-        {this.state.settings ? (
+        {this.state.screen === 'settings' ? (
           <div className="settings-screen">
             <div className="header">
               <h1>Настройки</h1>
               <div onClick={() => {
                 this.setState({
-                  settings: false,
+                  screen: 'main',
                   menu: false
                 })
                 this.menu.bind(this)
@@ -363,21 +451,102 @@ class Player extends Component {
                     notify: !this.state.notify
                   })
                   this.setState({
-                    notify: this.state.notify? false : true
+                    notify: this.state.notify ? false : true
                   })
                 }
               } className="settings-item">
                 <h2 className="item-name">Уведомления</h2><div className="item-set">{this.state.notify ? 'Вкл' : 'Выкл'}</div>
               </div>
               <div className="bottom">
-                <a onClick={()=>{
+                <a onClick={() => {
                   shell.openExternal('https://uenify.com/')
                 }}>Автор</a>
                 <span> • </span>
-                <a onClick={()=>{
+                <a onClick={() => {
                   shell.openExternal('https://github.com/uenify/musician')
                 }}>GitHub</a>
-        </div>
+              </div>
+            </div>
+          </div>
+        ) : ''}
+        {this.state.screen === 'playlists' ? (
+          <div className="settings-screen">
+            <div className="header">
+              <h1>Плейлисты</h1>
+              <div onClick={() => {
+                this.setState({
+                  screen: 'main',
+                  menu: false
+                })
+                this.menu.bind(this)
+              }} className="close" />
+            </div>
+            <div className="settings-list pl">
+              <div onClick={() => {
+
+                this.state.music[this.state.pl][current].selected = false
+                this.pause()
+                current = 0
+                player.src = this.state.music[0][0].src;
+                this.state.music[0][current].selected = true
+                this.setState({
+                  pl: 0,
+                  screen: 'main'
+                })
+              }}
+                className={this.state.pl ? 'track' : 'track -selected'}>
+                <div className='track-album noalbum' />
+                <div className="track-content">
+                  <div>
+                    <p className="track-name">
+                      {'Аудиозаписи'}
+                    </p>
+                    <p className="track-artist">
+                      {this.state.mLength + ' аудиозаписей'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              {this.state.playlists.map((pl, index) => {
+                var styles = {
+                  backgroundImage: pl[1].thumb
+                    ? "url(" +
+                    pl[1].thumb +
+                    ")"
+                    : ""
+                };
+                var selected = this.state.pl === index * 1 + 1 ? 'track -selected' : 'track';
+                return (
+                  <div onClick={() => {
+                    if (this.state.pl === (index * 1 + 1)) {
+                      this.setState({
+                        screen: 'main'
+                      })
+                    } else {
+                      this.getPlaylist(pl[1].id, index * 1 + 1)
+                    }
+
+                  }}
+                    className={selected}
+                    key={pl[1].raw_id}>
+                    <div style={styles} className={
+                      pl[1].thumb
+                        ? "track-album"
+                        : "track-album noimage"
+                    } />
+                    <div className="track-content">
+                      <div>
+                        <p className="track-name">
+                          {pl[0]}
+                        </p>
+                        <p className="track-artist">
+                          {pl[1].info_line_1.replace(/\&nbsp;/g, ' ')}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </div>
         ) : ''}
@@ -385,10 +554,18 @@ class Player extends Component {
           <div className="menu">
             <div className="menu-list" onClick={() => {
               this.setState({
-                settings: true
+                screen: 'settings'
               })
             }}>
               Настройки
+            </div>
+            <div className="menu-list" onClick={() => {
+              this.setState({
+                screen: 'playlists'
+              })
+            }}
+            >
+              Плейлисты
             </div>
             <div
               className="menu-list"
@@ -404,7 +581,17 @@ class Player extends Component {
             ""
           )}
         <div className="header">
-          <h1 id="title">Основной плейлист</h1>
+          <h1 onClick={() => {
+            this.setState({
+              screen: 'playlists'
+            })
+          }} id="title">{this.state.pl ? this.state.playlists[this.state.pl - 1][0] : 'Аудиозаписи '}
+            <i className="chevron">
+            <svg viewBox="0 0 32 32" width="18" height="18" fill="none" stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3">
+              <path d="M30 12 L16 24 2 12" />
+            </svg>
+            </i>
+          </h1>
           <div
             id="profile"
             className={this.state.menu ? "active" : ""}
@@ -447,7 +634,7 @@ class Player extends Component {
             </div>
             <div
               onClick={this.random.bind(this)}
-              className={this.state.random ?  "toggle-btn active" : "toggle-btn"}
+              className={this.state.random ? "toggle-btn active" : "toggle-btn"}
             >
               <svg
                 height="30px"
@@ -456,13 +643,13 @@ class Player extends Component {
                 width="30px"
               >
                 <circle />
-                  <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"></path>
+                <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"></path>
               </svg>
             </div>
           </div>
-          <div ref="scrubber" 
+          <div ref="scrubber"
             onMouseDown={this.onMouseDown}
-            onMouseUp={this.onMouseUp} 
+            onMouseUp={this.onMouseUp}
             className={this.state.focused ? "scrubber-cont focused" : "scrubber-cont"}>
             <div className="scrubber-back line" />
             <div
@@ -497,15 +684,15 @@ class Player extends Component {
                 useDragHandle={true}
                 rowRenderer={({ index, key, style }) => {
                   var styles = {
-                    backgroundImage: this.state.music[index].cover_css
+                    backgroundImage: this.state.music[this.state.pl][index].cover_css
                       ? "url(" +
-                      this.state.music[index].cover_css
+                      this.state.music[this.state.pl][index].cover_css
                         .split("url(")[1]
                         .split(")")[0] +
                       ")"
                       : ""
                   };
-                  var selected = this.state.music[index].selected
+                  var selected = this.state.music[this.state.pl][index].selected
                     ? "track  -selected"
                     : "track";
                   return (
@@ -517,7 +704,7 @@ class Player extends Component {
                           }}
                           style={styles}
                           className={
-                            this.state.music[index].cover_css
+                            this.state.music[this.state.pl][index].cover_css
                               ? "track-album"
                               : "track-album noimage"
                           }
@@ -529,20 +716,20 @@ class Player extends Component {
                             }}
                           >
                             <p className="track-name">
-                              {this.state.music[index].title}
+                              {this.state.music[this.state.pl][index].title}
                             </p>
                             <p className="track-artist">
-                              {this.state.music[index].artist}
+                              {this.state.music[this.state.pl][index].artist}
                             </p>
                           </div>
                           <footer>
                             <ul>
-                              <li><a download={this.state.music[index].artist + ' - ' + this.state.music[index].title + '.mp3'} type='audio/mpeg' href={this.state.music[index].src}>Скачать</a></li>
+                              <li><a download={this.state.music[this.state.pl][index].artist + ' - ' + this.state.music[this.state.pl][index].title + '.mp3'} type='audio/mpeg' href={this.state.music[this.state.pl][index].src}>Скачать</a></li>
                               {index === current || index === current + 1 ? '' :
                                 (<li onClick={() => {
-                                  if(index > current){
+                                  if (index > current) {
                                     this.reorder({ oldIndex: index, newIndex: current + 1 })
-                                  }else{
+                                  } else {
                                     this.reorder({ oldIndex: index, newIndex: current })
                                   }
                                 }}>Восп. след.</li>)}
@@ -558,11 +745,12 @@ class Player extends Component {
                   );
                 }}
                 onSortEnd={this.reorder.bind(this)}
-                rowCount={this.state.music.length}
+                rowCount={this.state.music[this.state.pl].length}
               />
             );
           }}
         </AutoSizer>
+        {this.state.loading ? (<div className="loader"/>):''}
       </div>
     );
   }

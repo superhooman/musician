@@ -1,6 +1,6 @@
 {
   "name": "musician",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "Lightweight VK music player.",
   "main": "main.js",
   "build": {
