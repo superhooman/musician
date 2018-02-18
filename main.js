@@ -3,11 +3,11 @@
 const electron = require('electron')
 const { join } = require('path')
 const isDev = require('electron-is-dev')
-const { appUpdater } = require('./autoupdater');
 const {
   app,
   BrowserWindow,
-  globalShortcut
+  globalShortcut,
+  autoUpdater
 } = electron;
 const settings = require("electron-settings");
 const ipc = require('electron').ipcMain
@@ -30,9 +30,6 @@ const getcolor = (theme) => {
 //require('electron-reload')(__dirname)
 
 
-function isWindowsOrmacOS() {
-	return process.platform === 'darwin' || process.platform === 'win32';
-}
 
 var platform = process.platform
 
@@ -48,8 +45,14 @@ if(platform === 'darwin'){
   notifier = require('node-notifier');
 }
 
-app.on('ready', () => {
+const server = 'https://hazel-server-jtnzqnuzkl.now.sh'
+const feed = `${server}/update/${process.platform}/${app.getVersion()}`
+autoUpdater.setFeedURL(feed)
 
+
+
+
+app.on('ready', () => {
   const mainWindow = new BrowserWindow({
     width: 425,
     height: 650,
@@ -71,17 +74,21 @@ app.on('ready', () => {
     });
   })
 
+  autoUpdater.on('update-downloaded', () => {
+    autoUpdater.quitAndInstall()
+    app.quit()
+  })
+  autoUpdater.on('update-available', () => {
+    notifier.notify({
+      'title': 'Musician',
+      'message': 'Доступно обновление',
+      'sound': false
+    });
+    mainWindow.hide()
+  })
+  autoUpdater.checkForUpdates()
 
   mainWindow.loadURL('file://' + __dirname + '/app/index.html?platform=' + platform)
-
-  const page = mainWindow.webContents;
-  
-  page.once('did-frame-finish-load', () => {
-    const checkOS = isWindowsOrmacOS();
-    if (checkOS && !isDev) {
-      // Initate auto-updates on macOs and windows
-      appUpdater();
-    }});
 
   globalShortcut.register("MediaPlayPause", () =>
     mainWindow.webContents.send("ping", "control:playPause")
@@ -92,16 +99,6 @@ app.on('ready', () => {
   globalShortcut.register("MediaPreviousTrack", () =>
     mainWindow.webContents.send("ping", "control:prevTrack")
   );
-  /*mainWindow.webContents.executeJavaScript(`
-    var path = require('path');
-    module.paths.push(path.resolve('node_modules'));
-    module.paths.push(path.resolve('../node_modules'));
-    module.paths.push(path.resolve(__dirname, '..', '..', 'electron', 'node_modules'));
-    module.paths.push(path.resolve(__dirname, '..', '..', 'resources/electron.asar', 'node_modules'));
-    module.paths.push(path.resolve(__dirname, '..', '..', 'app', 'node_modules'));
-    module.paths.push(path.resolve(__dirname, '..', '..', 'resources/app.asar', 'node_modules'));
-    path = undefined;
-  `);*/
 })
 
 

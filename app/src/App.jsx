@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {render} from 'react-dom'
 import Login from './components/login.js';
 import Player from './components/player.js';
+
 import './styles/App.css';
 const { remote } = require('electron')
 
@@ -9,7 +10,7 @@ const { remote } = require('electron')
 export default class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {login: true, done: false, maximized: false};
+    this.state = {login: true, done: false, maximized: false, download: false};
     this.createplayer = this.createplayer.bind(this)
   }
   componentDidMount(){
@@ -28,6 +29,7 @@ export default class App extends Component {
       }else{
         getaudio(-1, this.createplayer)
       }
+      var self = this
     }
     remote.BrowserWindow.getFocusedWindow().addListener('maximize', ()=>{
       this.setState({maximized: true})
@@ -77,6 +79,7 @@ export default class App extends Component {
               </div>
               {this.state.login ? <Login ondone={this.createplayer}/> : ''}
               {this.state.done ? <Player/> : ''}
+              {this.state.download ? <div className="loader"/> : ''}
             </div>
         )
     }
