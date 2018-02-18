@@ -587,16 +587,26 @@ input[type=range]::-webkit-slider-thumb {
   right: 18px;
 }
 
+.menu.active{
+  transform: none;
+  opacity: 1;
+  pointer-events: all;
+}
+
 .menu {
   position: fixed;
   background: #fff;
   border-radius: 4px;
   right: 21px;
+  pointer-events: none;
   width: 120px;
   top: 99px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
   z-index: 500;
   padding: 10px 0;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: transform .2s ease-in-out, opacity .2s ease-in-out;
 }
 
 .dark .menu {

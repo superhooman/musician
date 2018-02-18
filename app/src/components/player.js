@@ -550,8 +550,7 @@ class Player extends Component {
             </div>
           </div>
         ) : ''}
-        {this.state.menu ? (
-          <div className="menu">
+          <div className={this.state.menu? 'menu active' : 'menu'}>
             <div className="menu-list" onClick={() => {
               this.setState({
                 screen: 'settings'
@@ -577,9 +576,6 @@ class Player extends Component {
               Выйти
             </div>
           </div>
-        ) : (
-            ""
-          )}
         <div className="header">
           <h1 onClick={() => {
             this.setState({
@@ -594,11 +590,18 @@ class Player extends Component {
           </h1>
           <div
             id="profile"
+            tabIndex="0"
+            ref="profile"
             className={this.state.menu ? "active" : ""}
             style={{
               backgroundImage: "url(" + settings.get("user.photo") + ")"
             }}
-            onClick={this.menu.bind(this)}
+            onFocus={this.menu.bind(this)}
+            onBlur={()=>{
+              setTimeout(()=>{
+                this.menu.bind(this)()
+              },100)
+            }}
           />
         </div>
         <div className="plate">
