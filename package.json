@@ -3,24 +3,6 @@
   "version": "1.9.0",
   "description": "Lightweight VK music player.",
   "main": "main.js",
-  "build": {
-    "appId": "com.uenify.musician",
-    "win": {
-      "target": "nsis",
-      "icon": "app/img/logo.ico"
-    },
-    "mac": {
-      "asar": "false",
-      "icon": "app/img/logo.icns"
-    },
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "uenify",
-        "repo": "musician"
-      }
-    ]
-  },
   "scripts": {
     "dev": "webpack --watch",
     "build": "webpack",

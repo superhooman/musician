@@ -6,10 +6,10 @@ const isDev = require('electron-is-dev')
 const {
   app,
   BrowserWindow,
-  globalShortcut,
-  autoUpdater
+  globalShortcut
 } = electron;
 const settings = require("electron-settings");
+const { autoUpdater } = require("electron-updater");
 const ipc = require('electron').ipcMain
 let notifier 
 const getcolor = (theme) => {
@@ -73,7 +73,6 @@ app.on('ready', () => {
       'sound': false
     });
   })
-
   autoUpdater.on('update-downloaded', () => {
     autoUpdater.quitAndInstall()
     app.quit()

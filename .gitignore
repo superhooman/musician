@@ -1,8 +1,11 @@
 # Webpack
 app/build
 
-#Notifier
+# Notifier
 Musician.app
+
+# Config
+electron-builder.yml
 
 # Logs
 logs
