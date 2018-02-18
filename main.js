@@ -2,6 +2,8 @@
 // Basic init
 const electron = require('electron')
 const { join } = require('path')
+const isDev = require('electron-is-dev')
+const { appUpdater } = require('./autoupdater');
 const {
   app,
   BrowserWindow,
@@ -27,6 +29,10 @@ const getcolor = (theme) => {
 // Let electron reloads by itself when webpack watches changes in ./app/
 //require('electron-reload')(__dirname)
 
+
+function isWindowsOrmacOS() {
+	return process.platform === 'darwin' || process.platform === 'win32';
+}
 
 var platform = process.platform
 
@@ -67,6 +73,16 @@ app.on('ready', () => {
 
 
   mainWindow.loadURL('file://' + __dirname + '/app/index.html?platform=' + platform)
+
+  const page = mainWindow.webContents;
+  
+  page.once('did-frame-finish-load', () => {
+    const checkOS = isWindowsOrmacOS();
+    if (checkOS && !isDev) {
+      // Initate auto-updates on macOs and windows
+      appUpdater();
+    }});
+
   globalShortcut.register("MediaPlayPause", () =>
     mainWindow.webContents.send("ping", "control:playPause")
   );
