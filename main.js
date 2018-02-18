@@ -45,13 +45,6 @@ if(platform === 'darwin'){
   notifier = require('node-notifier');
 }
 
-const server = 'https://hazel-server-jtnzqnuzkl.now.sh'
-const feed = `${server}/update/${process.platform}/${app.getVersion()}`
-autoUpdater.setFeedURL(feed)
-
-
-
-
 app.on('ready', () => {
   const mainWindow = new BrowserWindow({
     width: 425,
