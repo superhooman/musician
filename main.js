@@ -6,7 +6,8 @@ const isDev = require('electron-is-dev')
 const {
   app,
   BrowserWindow,
-  globalShortcut
+  globalShortcut,
+  Menu
 } = electron;
 const settings = require("electron-settings");
 const { autoUpdater } = require("electron-updater");
@@ -28,7 +29,14 @@ const getcolor = (theme) => {
 
 // Let electron reloads by itself when webpack watches changes in ./app/
 //require('electron-reload')(__dirname)
-
+/*
+,
+      function (err, response, metadata){
+        if (metadata.activationValue === trueAnswer) {
+          mainWindow.webContents.send("ping", "control:nextTrack")
+        }
+      }
+*/
 
 
 var platform = process.platform
@@ -38,8 +46,8 @@ if(platform === 'darwin'){
   notifier = new NotificationCenter({
     customPath: join(
       __dirname,
-      'Musician.app/Contents/MacOS/Musician'
-    ),
+      'Musician.app/Contents/MacOS/musician'
+    )
   });
 }else{
   notifier = require('node-notifier');
@@ -58,13 +66,64 @@ app.on('ready', () => {
     minWidth: 390,
     minHeight: 450
   });
+  const template = [
+    {
+      label: 'Управление',
+      submenu: [
+        {label: 'Вперед', click(){
+          mainWindow.webContents.send("ping", "control:nextTrack")
+        }},
+        {label: 'Назад', click(){
+          mainWindow.webContents.send("ping", "control:prevTrack")
+        }},
+        {type: 'separator'},
+        {label: 'Плэй/Пауза', click(){
+          mainWindow.webContents.send("ping", "control:playPause")
+        }},
+      ]
+    },
+    {
+      label: 'Вид',
+      submenu: [
+        {role: 'reload'},
+        {role: 'togglefullscreen'}
+      ]
+    }
+  ]
+
+  if(platform === 'darwin'){
+    template.unshift({
+      label: app.getName(),
+      submenu: [
+        {label: 'О musician', role: 'about'},
+        {type: 'separator'},
+        {label: 'Настройки', click(){
+          mainWindow.webContents.send("ping", "screen:settings")
+        }},
+        {type: 'separator'},
+        {label: 'Сервисы', role: 'services', submenu: []},
+        {type: 'separator'},
+        {label: 'Скрыть musician', role: 'hide'},
+        {label: 'Скрыть остальное', role: 'hideothers'},
+        {label: 'Показать', role: 'unhide'},
+        {type: 'separator'},
+        {label: 'Выйти', role: 'quit'}
+      ]
+    })
+    var menu = Menu.buildFromTemplate(template)
+    Menu.setApplicationMenu(menu)
+  }
 
   ipc.on('asynchronous-message', (event, arg) =>{
-    notifier.notify({
-      'title': arg.title,
-      'message': arg.artist,
-      'sound': false
-    });
+    if(platform === 'darwin'){
+      var trueAnswer = 'Most def.';
+      notifier.notify({
+        title: arg.title,
+        message: arg.artist,
+        contentImage: arg.image,
+        sound: false
+      });
+    }
   })
   autoUpdater.on('update-downloaded', () => {
     autoUpdater.quitAndInstall()
@@ -79,9 +138,7 @@ app.on('ready', () => {
     mainWindow.hide()
   })
   autoUpdater.checkForUpdates()
-
   mainWindow.loadURL('file://' + __dirname + '/app/index.html?platform=' + platform)
-
   globalShortcut.register("MediaPlayPause", () =>
     mainWindow.webContents.send("ping", "control:playPause")
   );

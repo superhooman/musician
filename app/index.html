@@ -11,7 +11,8 @@
     <div id="app"></div>
     <script>
         const {
-            webFrame
+            webFrame,
+            remote
         } = window.require("electron");
         const settings = window.require("electron-settings");
         var uid, token
@@ -51,6 +52,14 @@
             xhr.onreadystatechange = function () {
                 if (this.readyState != 4) return;
                 var data = eval("(" + this.responseText + ")");
+                if (!data[1]) {
+                    remote.getCurrentWindow().webContents.session.clearStorageData(() => {
+                        settings.delete("music");
+                        settings.delete("user");
+                        remote.app.relaunch();
+                        remote.app.exit(0);
+                    });
+                }
                 for (var i in data[3][0]) {
                     if (
                         (data[3][0][i][3] != "" && data[3][0][i][4] != "",
@@ -59,6 +68,7 @@
                         var tr = {
                             artist: decodeHtmlEntity(data[3][0][i][3]),
                             title: decodeHtmlEntity(data[3][0][i][4]),
+                            id: data[3][0][i][1],
                             src: geturl(data[3][0][i][2]),
                             duration: data[3][0][i][5],
                             cover_css: data[3][0][i][8],
@@ -161,7 +171,7 @@
                         t = (n * (a + 1) ^ t + a) % n,
                         i[a] = t
                 }
-                return i
+                return i //АБЫЛ НЕ ЗАБЫВАЙ ЗАКРЫВАТЬ НОУТ
             }
             return o(e)
         }

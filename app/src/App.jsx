@@ -16,40 +16,31 @@ export default class App extends Component {
   componentDidMount(){
     if (settings.has("user.id")) {
       uid = settings.get('user.id')
-      if(settings.has('music')){
-        var date = new Date()
-        var compare = date - settings.get('user.date')
-        if (compare < 1000 * 60 * 60 * 8){
-          music = settings.get('music')
-          this.createplayer()
-        }else{
-          settings.set('user.date', date*1)
-          getaudio(-1, this.createplayer)
-        }
-      }else{
-        getaudio(-1, this.createplayer)
-      }
+      getaudio(-1, this.createplayer)
+      this.setState({
+        download: true
+      })
       var self = this
     }
-    remote.BrowserWindow.getFocusedWindow().addListener('maximize', ()=>{
+    remote.getCurrentWindow().addListener('maximize', ()=>{
       this.setState({maximized: true})
       document.body.classList.add('maximized')
     })
-    remote.BrowserWindow.getFocusedWindow().addListener('unmaximize', ()=>{
+    remote.getCurrentWindow().addListener('unmaximize', ()=>{
       this.setState({maximized: false})
       document.body.classList.remove('maximized')
     })
   }
 
   minimize(){
-    remote.BrowserWindow.getFocusedWindow().minimize();
+    remote.getCurrentWindow().minimize();
   }
 
   maximize(){
     this.state.maximized ? 
-      remote.BrowserWindow.getFocusedWindow().unmaximize()
+      remote.getCurrentWindow().unmaximize()
       :
-      remote.BrowserWindow.getFocusedWindow().maximize()
+      remote.getCurrentWindow().maximize()
     this.setState({
       maximized: this.state.maximized? false : true
     })
@@ -57,14 +48,15 @@ export default class App extends Component {
   }
 
   close(){
-    remote.BrowserWindow.getFocusedWindow().close()
+    remote.getCurrentWindow().close()
   }
 
 
   createplayer(){
     this.setState({
       login: false,
-      done: true
+      done: true,
+      download: false,
     })
   }
     render() {
