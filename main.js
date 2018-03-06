@@ -91,7 +91,7 @@ app.on('ready', () => {
     }
   ]
 
-  if(platform === 'darwin'){
+  if(platform === 'darwin2'){ //!!!НА ПЕРИОД ТЕСТИРОВАНИЯ
     template.unshift({
       label: app.getName(),
       submenu: [
@@ -132,7 +132,7 @@ app.on('ready', () => {
   autoUpdater.on('update-available', () => {
     notifier.notify({
       'title': 'Musician',
-      'message': 'Доступно обновление',
+      'message': 'Плеер обновляется',
       'sound': false
     });
     mainWindow.hide()

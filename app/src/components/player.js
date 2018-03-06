@@ -109,6 +109,11 @@ class Player extends Component {
           break;
         case "control:prevTrack":
           this.prev();
+          break;
+        case "screen:settings":
+          this.setState({
+            screen: "settings"
+          });
       }
     });
     this.setState({
