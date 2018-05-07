@@ -68,7 +68,7 @@ class Login extends Component {
             settings.set('user.photo', data.response[0].photo_50)
           }
         }
-      xmlHttp.open("POST", 'https://api.vk.com/method/users.get?user_ids=' + uid + '&fields=photo_50', true);
+      xmlHttp.open("POST", 'https://api.vk.com/method/users.get?user_ids=' + uid + '&fields=photo_50&v=5.73', true);
       xmlHttp.send(null);
           var time = new Date();
           settings.set("user.date", time);

@@ -457,15 +457,6 @@ h1:hover .chevron {
   margin-top: 16px;
 }
 
-@keyframes playing {
-  from {
-    transform: rotate(0deg)
-  }
-  to {
-    transform: rotate(359deg)
-  }
-}
-
 .track-name,
 .track-artist {
   margin: 0;
@@ -924,7 +915,7 @@ footer li {
   background-color: #000000;
 }
 
-.white .loader {
+.loader {
   background-color: #ffffff;
 }
 

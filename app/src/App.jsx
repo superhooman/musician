@@ -14,7 +14,7 @@ export default class App extends Component {
       done: false,
       maximized: false,
       download: false,
-      update: true
+      update: false
     };
     this.createplayer = this.createplayer.bind(this);
   }
