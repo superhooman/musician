@@ -2,10 +2,6 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 module.exports = {
 
-    node: {
-        __filename: true,
-        __dirname: true
-    },
 
     target: 'electron',
 

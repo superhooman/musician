@@ -1,7 +1,8 @@
-
 // Basic init
 const electron = require('electron')
-const { join } = require('path')
+const {
+  join
+} = require('path')
 const isDev = require('electron-is-dev')
 const {
   app,
@@ -9,49 +10,45 @@ const {
   globalShortcut,
   Menu
 } = electron;
+const {
+  download
+} = require('electron-dl');
 const settings = require("electron-settings");
-const { autoUpdater } = require("electron-updater");
+const {
+  autoUpdater
+} = require("electron-updater");
 const ipc = require('electron').ipcMain
-let notifier 
+let notifier
 const getcolor = (theme) => {
-  switch(theme){
+  switch (theme) {
     case 'dark':
-      return '#000000'
+      return '#333333'
       break
     case 'white':
       return '#ffffff'
       break
     default:
       return '#ffffff'
-      break    
+      break
   }
 }
 
-// Let electron reloads by itself when webpack watches changes in ./app/
-//require('electron-reload')(__dirname)
-/*
-,
-      function (err, response, metadata){
-        if (metadata.activationValue === trueAnswer) {
-          mainWindow.webContents.send("ping", "control:nextTrack")
-        }
-      }
-*/
+const platform = process.platform
 
-
-var platform = process.platform
-
-if(platform === 'darwin'){
+if (platform === 'darwin') {
   const NotificationCenter = require('node-notifier').NotificationCenter;
   notifier = new NotificationCenter({
     customPath: join(
       __dirname,
-      'Musician.app/Contents/MacOS/musician'
+      'musician.app/Contents/MacOS/musician'
     )
   });
-}else{
+} else {
   notifier = require('node-notifier');
 }
+
+// Let electron reloads by itself when webpack watches changes in ./app/
+if (isDev) require('electron-reload')(__dirname)
 
 app.on('ready', () => {
   const mainWindow = new BrowserWindow({
@@ -60,62 +57,106 @@ app.on('ready', () => {
     resizable: true,
     autoHideMenuBar: true,
     frame: platform !== 'win32',
-    backgroundColor: settings.has('settings.theme')? getcolor(settings.get('settings.theme')) : '#ffffff',
-    icon: platform === 'win32'? join(__dirname, 'app/img/logo.ico') : join(__dirname, 'app/img/logo.icns'),
+    backgroundColor: settings.has('settings.theme') ? getcolor(settings.get('settings.theme')) : '#ffffff',
+    icon: platform === 'win32' ? join(__dirname, 'app/img/logo.ico') : join(__dirname, 'app/img/logo.icns'),
     titleBarStyle: "hiddenInset",
     minWidth: 390,
-    minHeight: 450
+    minHeight: 450,
+    webPreferences: {
+      experimentalFeatures: true
+    }
   });
-  const template = [
-    {
+  const template = [{
       label: 'Управление',
-      submenu: [
-        {label: 'Вперед', click(){
-          mainWindow.webContents.send("ping", "control:nextTrack")
-        }},
-        {label: 'Назад', click(){
-          mainWindow.webContents.send("ping", "control:prevTrack")
-        }},
-        {type: 'separator'},
-        {label: 'Плэй/Пауза', click(){
-          mainWindow.webContents.send("ping", "control:playPause")
-        }},
+      submenu: [{
+          label: 'Вперед',
+          click() {
+            mainWindow.webContents.send("ping", "control:nextTrack")
+          }
+        },
+        {
+          label: 'Назад',
+          click() {
+            mainWindow.webContents.send("ping", "control:prevTrack")
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Плэй/Пауза',
+          click() {
+            mainWindow.webContents.send("ping", "control:playPause")
+          }
+        },
       ]
     },
     {
       label: 'Вид',
-      submenu: [
-        {role: 'reload'},
-        {role: 'togglefullscreen'}
+      submenu: [{
+          role: 'reload'
+        },
+        {
+          role: 'togglefullscreen'
+        }
       ]
     }
   ]
 
-  if(platform === 'darwin2'){ //!!!НА ПЕРИОД ТЕСТИРОВАНИЯ
+  if (platform === 'darwin' && !isDev) {
     template.unshift({
       label: app.getName(),
-      submenu: [
-        {label: 'О musician', role: 'about'},
-        {type: 'separator'},
-        {label: 'Настройки', click(){
-          mainWindow.webContents.send("ping", "screen:settings")
-        }},
-        {type: 'separator'},
-        {label: 'Сервисы', role: 'services', submenu: []},
-        {type: 'separator'},
-        {label: 'Скрыть musician', role: 'hide'},
-        {label: 'Скрыть остальное', role: 'hideothers'},
-        {label: 'Показать', role: 'unhide'},
-        {type: 'separator'},
-        {label: 'Выйти', role: 'quit'}
+      submenu: [{
+          label: 'О musician',
+          role: 'about'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Сменить тему',
+          click() {
+            mainWindow.webContents.send("app", "theme:change")
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Сервисы',
+          role: 'services',
+          submenu: []
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Скрыть musician',
+          role: 'hide'
+        },
+        {
+          label: 'Скрыть остальное',
+          role: 'hideothers'
+        },
+        {
+          label: 'Показать',
+          role: 'unhide'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Выйти',
+          role: 'quit'
+        }
       ]
     })
     var menu = Menu.buildFromTemplate(template)
     Menu.setApplicationMenu(menu)
   }
 
-  ipc.on('asynchronous-message', (event, arg) =>{
-    if(platform === 'darwin'){
+  ipc.on('notify', (event, arg) => {
+    if (platform === 'darwin') {
       var trueAnswer = 'Most def.';
       notifier.notify({
         title: arg.title,
@@ -124,6 +165,13 @@ app.on('ready', () => {
         sound: false
       });
     }
+  })
+  ipc.on('download', (event, args) => {
+    download(BrowserWindow.getFocusedWindow(), args.url, {
+      filename: args.filename,
+      errorTitle: 'Ошибка',
+      errorMessage: 'Не удалось скачать'
+    })
   })
   autoUpdater.on('update-downloaded', () => {
     autoUpdater.quitAndInstall()
@@ -151,4 +199,8 @@ app.on('ready', () => {
 })
 
 
-app.on('window-all-closed', app.quit)
+app.on('window-all-closed', function () {
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
