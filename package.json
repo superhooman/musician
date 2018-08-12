@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "dev": "webpack --watch",
-    "dist": "electron-builder",
+    "dist": "electron-builder --publish never",
     "start": "electron .",
     "startall": "npm-run-all --parallel dev start"
   },
