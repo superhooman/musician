@@ -7,6 +7,11 @@ Standalone VK music player
 
 [Download the latest release](https://github.com/uenify/musician/releases)
 
+## Нужна помощь!
+
+Нужен кто-то, кто сможет вести разработку для Windows.
+Точнее создавать билды для неё. + Добавлять функционал специфичный Windows
+
 ## Contribute
 
 To run it locally on your own computer:

@@ -374,9 +374,9 @@ class Player extends Component {
 									<div>
 										<img className="captcha-image" src={'https://m.vk.com' + res.data[4]} />
 										<input
-											onKeyPress={e=>{
+											onKeyPress={(e) => {
 												let key = e.which || e.keyCode;
-												if (key === 13) { 
+												if (key === 13) {
 													this.search(q, res.data[5].captcha_sid, this.state.captcha);
 												}
 											}}
@@ -399,11 +399,14 @@ class Player extends Component {
 							}
 						});
 					}
-					if (res.data[3][2]) {
+					if (res.data[3][0]) {
 						let el = document.createElement('html');
-						el.innerHTML = res.data[3][2];
-						let audios = el.getElementsByClassName('audio_item');
+						el.innerHTML = res.data[3][0];
+						let cont = el.getElementsByClassName('AudioSerp__foundGlobal')[0];
+						let audios = cont.getElementsByClassName('audio_item');
+						let albums = cont.getElementsByClassName('audioPlaylists__item');
 						let result = [];
+						let resAlbums = [];
 						for (let i = 0; i < audios.length; i++) {
 							let audio = document.createElement('div');
 							audio.innerHTML = audios[i].innerHTML;
@@ -417,13 +420,29 @@ class Player extends Component {
 								result.push(track);
 							}
 						}
+						for (let j = 0; j < albums.length; j++) {
+							let pl = document.createElement('div');
+							pl.innerHTML = albums[j].innerHTML;
+							if (pl.innerHTML !== 'undefined') {
+								let album = {};
+								album.src = pl.getElementsByClassName('audioPlaylists__itemLink')[0].attributes.href.value;
+								album.artist = pl.getElementsByClassName('audioPlaylists__itemSubtitle')[0].innerText;
+								album.title = pl.getElementsByClassName('audioPlaylists__itemTitle')[0].innerText;
+								album.cover_css = pl.getElementsByClassName(
+									'audioPlaylists__itemCover'
+								)[0].attributes.style.value;
+								resAlbums.push(album);
+							}
+						}
 						this.setState({
-							resultServer: result
+							resultServer: result,
+							resultServerAlbums: resAlbums
 						});
-					}else{
+					} else {
 						this.setState({
-							resultServer: []
-						})
+							resultServer: [],
+							resultServerAlbums: []
+						});
 					}
 				}
 			});
@@ -442,7 +461,6 @@ class Player extends Component {
 		this.setState({
 			loading: true
 		});
-		var self = this;
 		axios
 			.post('https://m.vk.com/audio?act=audio_playlist' + this.state.user.uid + '_' + id, '_ajax=1&offset=0', {
 				headers: {
@@ -461,8 +479,8 @@ class Player extends Component {
 						audio.innerHTML = audios[i].innerHTML;
 						if (audio.innerHTML !== 'undefined') {
 							let track = {};
-							track.artist = audio.getElementsByClassName('ai_title')[0].innerHTML;
-							track.title = audio.getElementsByClassName('ai_artist')[0].innerHTML;
+							track.artist = audio.getElementsByClassName('ai_title')[0].innerText;
+							track.title = audio.getElementsByClassName('ai_artist')[0].innerText;
 							track.cover_css = audio.getElementsByClassName('ai_play')[0].attributes.style.value;
 							track.duration = audio.getElementsByClassName('ai_dur')[0].attributes['data-dur'].value;
 							track.src = boop(audio.getElementsByTagName('input')[0].value, this.state.user.uid);
@@ -476,6 +494,50 @@ class Player extends Component {
 					this.setState({
 						loading: false,
 						pl: index,
+						screen: 'current',
+						music: music,
+						current: 0
+					});
+				}
+			});
+	}
+	getAlbum(link) {
+		this.setState({
+			loading: true
+		});
+		axios
+			.post('https://m.vk.com' + link, '', {
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					'x-requested-with': 'XMLHttpRequest'
+				}
+			})
+			.then((res) => {
+				if (res.data) {
+					let el = document.createElement('html');
+					el.innerHTML = res.data[4];
+					let audios = el.getElementsByClassName('audio_item');
+					let result = [];
+					for (let i = 0; i < audios.length; i++) {
+						let audio = document.createElement('div');
+						audio.innerHTML = audios[i].innerHTML;
+						if (audio.innerHTML !== 'undefined') {
+							let track = {};
+							track.artist = audio.getElementsByClassName('ai_title')[0].innerText;
+							track.title = audio.getElementsByClassName('ai_artist')[0].innerText;
+							track.cover_css = audio.getElementsByClassName('ai_play')[0].attributes.style.value;
+							track.duration = audio.getElementsByClassName('ai_dur')[0].attributes['data-dur'].value;
+							track.src = boop(audio.getElementsByTagName('input')[0].value, this.state.user.uid);
+							result.push(track);
+						}
+					}
+					let music = this.state.music;
+					music.album = result;
+					this.pause();
+					this.player.src = this.state.music.album[0].src;
+					this.setState({
+						loading: false,
+						pl: 'album',
 						screen: 'current',
 						music: music,
 						current: 0
@@ -825,16 +887,52 @@ class Player extends Component {
 								<div>
 									<div className="results-header">Ваши аудиозаписи</div>
 									<div className="empty">
-										По запросу <b>"{this.state.search}"</b> ничего не найдено
+										По запросу <b>«{this.state.search}»</b> ничего не найдено
 									</div>
 								</div>
 							) : null}
 						</div>
 						<div className="results-server">
+							{this.state.search.length > 2 && this.state.resultServerAlbums ? this.state
+								.resultServerAlbums.length ? (
+								<div>
+									<div className="results-header">Альбомы</div>
+									<div className="albums">
+										{this.state.resultServerAlbums.map((el, i) => {
+											let styles = {
+												backgroundImage: el.cover_css
+													? 'url(' + el.cover_css.split('url(')[1].split(')')[0] + ')'
+													: ''
+											};
+											return (
+												<div
+													onClick={() => {
+														this.getAlbum(el.src)
+														console.log(el.src)
+													}}
+													key={i}
+													className={'track'}
+												>
+													<div
+														style={styles}
+														className={el.cover_css ? 'track-album' : 'track-album noimage'}
+													/>
+													<div className="track-content">
+														<p className="track-name">{el.title}</p>
+														<p className="track-artist">{el.artist}</p>
+													</div>
+												</div>
+											);
+										})}
+									</div>
+								</div>
+							) : null : null}
+						</div>
+						<div className="results-server">
 							{this.state.search.length > 2 && this.state.resultServer ? this.state.resultServer
 								.length ? (
 								<div>
-									<div className="results-header">Результаты поиска</div>
+									<div className="results-header">Все Аудиозаписи</div>
 									{this.state.resultServer.map((el, i) => {
 										let styles = {
 											backgroundImage: el.cover_css

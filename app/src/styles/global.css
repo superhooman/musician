@@ -967,3 +967,31 @@ footer li {
   border-radius: 4px;
   box-shadow: 0 4px 8px -2px rgba(0,0,0,.14);
 }
+
+.albums .track {
+  flex-direction: column;
+  padding: 16px 16px 16px 24px;
+}
+
+.albums .track-album {
+  height: 100px;
+  width: 100px;
+}
+
+.albums .track-content {
+  margin: 4px 0 0 0;
+  width: 100px;
+}
+
+.albums .track-name {
+  font-size: 14px;
+}
+
+.albums .track-artist {
+  font-size: 13px;
+}
+
+.albums {
+  display: flex;
+  overflow: scroll;
+}
