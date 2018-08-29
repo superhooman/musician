@@ -882,13 +882,14 @@ footer li {
 }
 
 .tab.playlists {
-  overflow: scroll;
+  overflow-y: scroll;
 }
 
 .results {
-  overflow: scroll;
-  padding-top: 58px;
+  overflow-y: scroll;
+  margin-top: 50px;
   box-sizing: border-box;
+  padding-top: 16px;
 }
 
 .results .empty {
@@ -928,6 +929,7 @@ footer li {
   position: fixed;
   width: 100%;
   z-index: 1000;
+  margin-top: -50px;
 }
 
 .results-header {
@@ -993,5 +995,5 @@ footer li {
 
 .albums {
   display: flex;
-  overflow: scroll;
+  overflow-x: scroll;
 }

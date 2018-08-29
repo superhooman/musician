@@ -836,7 +836,7 @@ class Player extends Component {
 					</div>
 					<div
 						style={{
-							height: platform() === 'win32' ? 'calc(100vh - 226px)' : 'calc(100vh - 232px)'
+							height: platform() === 'win32' ? 'calc(100vh - 276px)' : 'calc(100vh - 232px)'
 						}}
 						className="results"
 					>
