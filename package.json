@@ -15,6 +15,10 @@
       "category": "public.app-category.music",
       "icon": "./app/img/logo.icns"
     },
+    "win": {
+      "target": "nsis",
+      "icon": "./app/img/logo.ico"
+    },
     "asar": "false"
   },
   "author": "uenify",
