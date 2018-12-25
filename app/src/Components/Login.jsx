@@ -115,6 +115,7 @@ class Login extends Component {
 				text: ''
 			}
 		};
+		this.count = 0
 		this.createLoginWindow = this.createLoginWindow.bind(this);
 		this.getInitialInfo = this.getInitialInfo.bind(this);
 		this.getAudio = this.getAudio.bind(this);
@@ -192,6 +193,7 @@ class Login extends Component {
 				console.log('Error', data);
 			}
 			for (let i in data[3][0]) {
+				this.count++
 				if ((data[3][0][i][3] != '' && data[3][0][i][4] != '', data[3][0][i][2] != '')) {
 					textarea.innerHTML = data[3][0][i][3];
 					let artist = textarea.innerText;
@@ -212,7 +214,7 @@ class Login extends Component {
 				music: music
 			});
 			if (Object.keys(data[3][0]).length > 30) {
-				this.getAudio(music.length, callback);
+				this.getAudio(this.count, callback);
 			} else {
 				callback(music);
 			}

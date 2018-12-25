@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "webpack --watch",
     "dist": "electron-builder --publish never",
+    "distwin" : "electron-builder --publish never --win",
     "start": "electron .",
     "startall": "npm-run-all --parallel dev start"
   },

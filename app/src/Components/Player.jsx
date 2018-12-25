@@ -35,6 +35,12 @@ const titles = {
 	search: 'Поиск'
 };
 
+const getHTMLRendered = (html) => {
+	let el = document.createElement('div');
+	el.innerHTML = html;
+	return el.innerText;
+};
+
 class Player extends Component {
 	constructor(props) {
 		super(props);
@@ -74,9 +80,11 @@ class Player extends Component {
 		this.random = this.random.bind(this);
 		this.loop = this.loop.bind(this);
 		this.search = this.search.bind(this);
+		this._addFromSearch = this._addFromSearch.bind(this)
 	}
 	componentWillMount() {
 		this.player = new Audio();
+		window.player = this.player;
 		this.player.src = this.state.music[this.state.pl][0].src;
 		ipc.on('ping', (event, message) => {
 			switch (message) {
@@ -247,12 +255,12 @@ class Player extends Component {
 			current: current
 		});
 	}
-	deleteWarning(i, styles) {
+	deleteWarning(i, styles, id) {
 		this.setState({
 			dialog: {
 				show: true,
 				title: 'Удалить аудиозапись',
-				text: 'Вы собираетесь удалить из очереди:',
+				text: 'Вы собираетесь удалить:',
 				component: (
 					<div className="track">
 						<div
@@ -271,7 +279,7 @@ class Player extends Component {
 					{
 						label: 'Удалить',
 						func: () => {
-							this.deleteAudio(i);
+							this.deleteAudio(id, i);
 						}
 					}
 				]
@@ -296,7 +304,7 @@ class Player extends Component {
 			}
 		});
 	}
-	deleteAudio(i) {
+	deleteAudio(id, i) {
 		let music = this.state.music;
 		let current = this.state.current;
 		let pl = this.state.pl;
@@ -311,9 +319,20 @@ class Player extends Component {
 			this.next();
 			music[pl].splice(i, 1);
 		}
-		this.setState({
-			music: music,
-			current: current
+		axios({
+			url: 'https://api.vk.com/method/audio.delete',
+			params: {
+				v: '5.73',
+				audio_id: id.split('_')[1],
+				owner_id: id.split('_')[0],
+				access_token: this.state.user.token
+			}
+		}).then((res) => {
+			settings.set('user.music', music)
+			this.setState({
+				music: music,
+				current: current
+			});
 		});
 	}
 	notify(current) {
@@ -412,6 +431,7 @@ class Player extends Component {
 							audio.innerHTML = audios[i].innerHTML;
 							if (audio.innerHTML !== 'undefined') {
 								let track = {};
+								track.id = audios[i].id;
 								track.artist = audio.getElementsByClassName('ai_title')[0].innerText;
 								track.title = audio.getElementsByClassName('ai_artist')[0].innerText;
 								track.cover_css = audio.getElementsByClassName('ai_play')[0].attributes.style.value;
@@ -425,7 +445,9 @@ class Player extends Component {
 							pl.innerHTML = albums[j].innerHTML;
 							if (pl.innerHTML !== 'undefined') {
 								let album = {};
-								album.src = pl.getElementsByClassName('audioPlaylists__itemLink')[0].attributes.href.value;
+								album.src = pl.getElementsByClassName(
+									'audioPlaylists__itemLink'
+								)[0].attributes.href.value;
 								album.artist = pl.getElementsByClassName('audioPlaylists__itemSubtitle')[0].innerText;
 								album.title = pl.getElementsByClassName('audioPlaylists__itemTitle')[0].innerText;
 								album.cover_css = pl.getElementsByClassName(
@@ -447,7 +469,7 @@ class Player extends Component {
 				}
 			});
 	}
-	getPlaylist(id, index) {
+	getPlaylist(pl, index) {
 		if (this.state.music[index]) {
 			this.pause();
 			this.player.src = this.state.music[index][0].src;
@@ -461,45 +483,80 @@ class Player extends Component {
 		this.setState({
 			loading: true
 		});
-		axios
-			.post('https://m.vk.com/audio?act=audio_playlist' + this.state.user.uid + '_' + id, '_ajax=1&offset=0', {
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-					'x-requested-with': 'XMLHttpRequest'
-				}
-			})
-			.then((res) => {
-				if (res.data) {
-					let el = document.createElement('html');
-					el.innerHTML = res.data[3][0];
-					let audios = el.getElementsByClassName('audio_item');
-					let result = [];
-					for (let i = 0; i < audios.length; i++) {
-						let audio = document.createElement('div');
-						audio.innerHTML = audios[i].innerHTML;
-						if (audio.innerHTML !== 'undefined') {
-							let track = {};
-							track.artist = audio.getElementsByClassName('ai_title')[0].innerText;
-							track.title = audio.getElementsByClassName('ai_artist')[0].innerText;
-							track.cover_css = audio.getElementsByClassName('ai_play')[0].attributes.style.value;
-							track.duration = audio.getElementsByClassName('ai_dur')[0].attributes['data-dur'].value;
-							track.src = boop(audio.getElementsByTagName('input')[0].value, this.state.user.uid);
-							result.push(track);
-						}
+		const mountData = (res) => {
+			if (res.data) {
+				let el = document.createElement('html');
+				el.innerHTML = res.data[3][0];
+				let audios = el.getElementsByClassName('audio_item');
+				let result = [];
+				for (let i = 0; i < audios.length; i++) {
+					let audio = document.createElement('div');
+					audio.innerHTML = audios[i].innerHTML;
+					if (audio.innerHTML !== 'undefined') {
+						let track = {};
+						track.artist = audio.getElementsByClassName('ai_title')[0].innerText;
+						track.title = audio.getElementsByClassName('ai_artist')[0].innerText;
+						track.cover_css = audio.getElementsByClassName('ai_play')[0].attributes.style.value;
+						track.duration = audio.getElementsByClassName('ai_dur')[0].attributes['data-dur'].value;
+						track.src = boop(audio.getElementsByTagName('input')[0].value, this.state.user.uid);
+						result.push(track);
 					}
-					let music = this.state.music;
-					music[index] = result;
-					this.pause();
-					this.player.src = this.state.music[index][0].src;
-					this.setState({
-						loading: false,
-						pl: index,
-						screen: 'current',
-						music: music,
-						current: 0
-					});
 				}
-			});
+				let music = this.state.music;
+				music[index] = result;
+				this.pause();
+				this.player.src = this.state.music[index][0].src;
+				this.setState({
+					loading: false,
+					pl: index,
+					screen: 'current',
+					music: music,
+					current: 0
+				});
+			}
+		};
+		axios
+			.post(
+				'https://m.vk.com/audio?act=audio_playlist' + pl.owner_id + '_' + pl.id,
+				'&from=audios' + this.state.user.uid + '&access_hash=' + pl.access_hash + '&_ajax=1&offset=0',
+				{
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						'x-requested-with': 'XMLHttpRequest'
+					}
+				}
+			)
+			.then(mountData);
+	}
+	_addFromSearch(el, i){
+		let music = this.state.music
+		let main = this.state.music.main
+		let resultServer = this.state.resultServer
+		let current = this.state.current
+		let id = el.id
+		axios({
+			url: 'https://api.vk.com/method/audio.add',
+			params: {
+				v: '5.73',
+				audio_id: id.split('_')[1],
+				owner_id: id.split('audio')[1].split('_')[0],
+				access_token: this.state.user.token
+			}
+		}).then((res) => {
+			let track = [el]
+			track[0].id = this.state.user.uid + '_' + res.data.response + '_audios' + this.state.user.uid
+			track = track.concat(main)
+			music.main = track
+			settings.set('user.music', track)
+			resultServer[i].added = true
+			current++ 
+			this.setState({
+				music,
+				current,
+				resultServer,
+				screen: 'current'
+			})
+		});
 	}
 	getAlbum(link) {
 		this.setState({
@@ -699,7 +756,11 @@ class Player extends Component {
 															<li
 																onClick={(e) => {
 																	e.stopPropagation();
-																	this.deleteWarning(index, styles);
+																	this.deleteWarning(
+																		index,
+																		styles,
+																		this.state.music[this.state.pl][index].id
+																	);
 																}}
 															>
 																Удалить
@@ -757,7 +818,7 @@ class Player extends Component {
 											screen: 'current'
 										});
 									} else {
-										this.getPlaylist(pl[1].id, index * 1 + 1);
+										this.getPlaylist(pl[1], index * 1 + 1);
 									}
 								}}
 								className={selected}
@@ -771,7 +832,7 @@ class Player extends Component {
 											{this.state.music[index + 1] ? (
 												this.state.music[index + 1].length + ' аудиозаписей'
 											) : (
-												pl[1].info_line_1.replace(/\&nbsp;/g, ' ')
+												getHTMLRendered(pl[1].footer).split('·')[0]
 											)}
 										</p>
 									</div>
@@ -907,8 +968,7 @@ class Player extends Component {
 											return (
 												<div
 													onClick={() => {
-														this.getAlbum(el.src)
-														console.log(el.src)
+														this.getAlbum(el.src);
 													}}
 													key={i}
 													className={'track'}
@@ -964,6 +1024,20 @@ class Player extends Component {
 												<div className="track-content">
 													<p className="track-name">{el.title}</p>
 													<p className="track-artist">{el.artist}</p>
+													{
+															!el.added ? <footer>
+															<ul>
+																<li>
+																	<a onClick={e => {
+																		e.stopPropagation()
+																		this._addFromSearch(el, i)
+																	}}>
+																		Добавить
+																	</a>
+																</li>
+															</ul>
+														</footer> : null
+														}
 												</div>
 											</div>
 										);
