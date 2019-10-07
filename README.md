@@ -3,9 +3,9 @@ Standalone VK music player
 
 [![Build Status](https://travis-ci.org/uenify/musician.svg?branch=master)](https://travis-ci.org/uenify/musician.svg?branch=master)
 
-![Screenshots (White and Dark)](https://uenify.com/musician.jpg)
+![Musician banner](https://uenify.com/musician/banner.jpg)
 
-[Download the latest release](https://github.com/uenify/musician/releases)
+[Download / Скачать](https://uenify.com/musician)
 
 ## Нужна помощь!
 
