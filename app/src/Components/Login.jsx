@@ -189,23 +189,24 @@ class Login extends Component {
 			let data = res.data;
 			let textarea = document.createElement('textarea');
 
-			if (!data[1]) {
+			if (!data) {
 				console.log('Error', data);
 			}
-			for (let i in data[3][0]) {
+			let musicArr = Object.values(data.data[0])
+			for (let i in musicArr) {
 				this.count++
-				if ((data[3][0][i][3] != '' && data[3][0][i][4] != '', data[3][0][i][2] != '')) {
-					textarea.innerHTML = data[3][0][i][3];
+				if ((musicArr[i][3] != '' && musicArr[i][4] != '', musicArr[i][2] != '')) {
+					textarea.innerHTML = musicArr[i][3];
 					let artist = textarea.innerText;
-					textarea.innerHTML = data[3][0][i][4];
-					let title = textarea.innerText;
+					textarea.innerHTML = musicArr[i][4];
+					let title = `${textarea.innerText}${musicArr[i][11] ? `<span class="ai_subtitle">${musicArr[i][11]}</span>` : ''}`;
 					let tr = {
 						artist: artist,
 						title: title,
-						id: data[3][0][i][1],
-						src: getURL(data[3][0][i][2], this.state.uid).split('?')[0],
-						duration: data[3][0][i][5],
-						cover_css: data[3][0][i][8]
+						id: musicArr[i][1],
+						src: getURL(musicArr[i][2], this.state.uid).split('?')[0],
+						duration: musicArr[i][5],
+						cover_css: musicArr[i][8]
 					};
 					music.push(tr);
 				}
@@ -213,7 +214,7 @@ class Login extends Component {
 			this.setState({
 				music: music
 			});
-			if (Object.keys(data[3][0]).length > 30) {
+			if (Object.keys(data.data[1]).length > 30) {
 				this.getAudio(this.count, callback);
 			} else {
 				callback(music);

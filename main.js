@@ -63,7 +63,8 @@ app.on('ready', () => {
     minWidth: 390,
     minHeight: 450,
     webPreferences: {
-      experimentalFeatures: true
+      experimentalFeatures: true,
+      nodeIntegration: true
     }
   });
   const template = [{
@@ -157,9 +158,9 @@ app.on('ready', () => {
 
   ipc.on('notify', (event, arg) => {
     if (platform === 'darwin') {
-      var trueAnswer = 'Most def.';
       notifier.notify({
         title: arg.title,
+        subtitle: arg.subtitle,
         message: arg.artist,
         contentImage: arg.image,
         sound: false
@@ -185,7 +186,9 @@ app.on('ready', () => {
     });
     mainWindow.hide()
   })
-  autoUpdater.checkForUpdates()
+  if(isDev){
+    autoUpdater.checkForUpdates()
+  }
   mainWindow.loadURL('file://' + __dirname + '/app/index.html?platform=' + platform)
   globalShortcut.register("MediaPlayPause", () =>
     mainWindow.webContents.send("ping", "control:playPause")

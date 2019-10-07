@@ -9,6 +9,6 @@ render(
     <App/>,
     document.getElementById('app')
 )
-webFrame.setZoomLevelLimits(1, 1);
+
 document.body.classList.add(platform())
 document.body.classList.add(settings.has('settings.theme') ? settings.get('settings.theme') : 'white')

@@ -111,10 +111,11 @@ class Player extends Component {
 				}
 			})
 			.then((res) => {
-				if (res.data && res.data[1]) {
+				if (res.data.data && res.data.data[0]) {
 					let playLists = [];
-					for (let i of res.data[3][1]) {
-						playLists.push(res.data[3][0][i]);
+					let data = Object.values(res.data.data[0])
+					for (let i of data) {
+						playLists.push(i);
 					}
 					this.setState({
 						playLists
@@ -270,7 +271,7 @@ class Player extends Component {
 							}
 						/>
 						<div className="track-content">
-							<p className="track-name">{this.state.music[this.state.pl][i].title}</p>
+						<p dangerouslySetInnerHTML={{__html: this.state.music[this.state.pl][i].title}} className="track-name"/>
 							<p className="track-artist">{this.state.music[this.state.pl][i].artist}</p>
 						</div>
 					</div>
@@ -342,14 +343,15 @@ class Player extends Component {
 			cover = this.state.music[pl][current].cover_css.split('url(')[1].split(')')[0];
 		}
 		ipc.send('notify', {
-			title: this.state.music[pl][current].title,
+			title: getHTMLRendered(this.state.music[pl][current].title.split('<')[0]),
+			subtitle: getHTMLRendered('<' + this.state.music[pl][current].title.split('<')[1]),
 			artist: this.state.music[pl][current].artist,
 			image: cover
 		});
 	}
 	download(i) {
 		let name =
-			this.state.music[this.state.pl][i].artist + ' - ' + this.state.music[this.state.pl][i].title + '.mp3';
+			this.state.music[this.state.pl][i].artist + ' - ' + getHTMLRendered(this.state.music[this.state.pl][i].title) + '.mp3';
 		let url = this.state.music[this.state.pl][i].src;
 		ipc.send('download', {
 			url: url,
@@ -418,9 +420,10 @@ class Player extends Component {
 							}
 						});
 					}
-					if (res.data[3][0]) {
+					if (res.data.data[0]) {
 						let el = document.createElement('html');
-						el.innerHTML = res.data[3][0];
+						console.log(res.data.data)
+						el.innerHTML = res.data.data[0];
 						let cont = el.getElementsByClassName('AudioSerp__foundGlobal')[0];
 						let audios = cont.getElementsByClassName('audio_item');
 						let albums = cont.getElementsByClassName('audioPlaylists__item');
@@ -432,7 +435,7 @@ class Player extends Component {
 							if (audio.innerHTML !== 'undefined') {
 								let track = {};
 								track.id = audios[i].id;
-								track.artist = audio.getElementsByClassName('ai_title')[0].innerText;
+								track.artist = audio.getElementsByClassName('ai_title')[0].innerHTML;
 								track.title = audio.getElementsByClassName('ai_artist')[0].innerText;
 								track.cover_css = audio.getElementsByClassName('ai_play')[0].attributes.style.value;
 								track.duration = audio.getElementsByClassName('ai_dur')[0].attributes['data-dur'].value;
@@ -486,7 +489,8 @@ class Player extends Component {
 		const mountData = (res) => {
 			if (res.data) {
 				let el = document.createElement('html');
-				el.innerHTML = res.data[3][0];
+
+				el.innerHTML = res.data.data[0];
 				let audios = el.getElementsByClassName('audio_item');
 				let result = [];
 				for (let i = 0; i < audios.length; i++) {
@@ -494,8 +498,8 @@ class Player extends Component {
 					audio.innerHTML = audios[i].innerHTML;
 					if (audio.innerHTML !== 'undefined') {
 						let track = {};
-						track.artist = audio.getElementsByClassName('ai_title')[0].innerText;
-						track.title = audio.getElementsByClassName('ai_artist')[0].innerText;
+						track.artist = audio.getElementsByClassName('ai_artist')[0].innerText;
+						track.title = audio.getElementsByClassName('ai_title')[0].innerHTML;
 						track.cover_css = audio.getElementsByClassName('ai_play')[0].attributes.style.value;
 						track.duration = audio.getElementsByClassName('ai_dur')[0].attributes['data-dur'].value;
 						track.src = boop(audio.getElementsByTagName('input')[0].value, this.state.user.uid);
@@ -580,7 +584,7 @@ class Player extends Component {
 						audio.innerHTML = audios[i].innerHTML;
 						if (audio.innerHTML !== 'undefined') {
 							let track = {};
-							track.artist = audio.getElementsByClassName('ai_title')[0].innerText;
+							track.artist = audio.getElementsByClassName('ai_title')[0].innerHTML;
 							track.title = audio.getElementsByClassName('ai_artist')[0].innerText;
 							track.cover_css = audio.getElementsByClassName('ai_play')[0].attributes.style.value;
 							track.duration = audio.getElementsByClassName('ai_dur')[0].attributes['data-dur'].value;
@@ -712,9 +716,7 @@ class Player extends Component {
 													}
 												/>
 												<div className="track-content">
-													<p className="track-name">
-														{this.state.music[this.state.pl][index].title}
-													</p>
+													<p dangerouslySetInnerHTML={{__html: this.state.music[this.state.pl][index].title}} className="track-name"/>
 													<p className="track-artist">
 														{this.state.music[this.state.pl][index].artist}
 													</p>
@@ -827,7 +829,7 @@ class Player extends Component {
 								<div style={styles} className={pl[1].thumb ? 'track-album' : 'track-album noalbum'} />
 								<div className="track-content">
 									<div>
-										<p className="track-name">{pl[0]}</p>
+										<p className="track-name">{getHTMLRendered(pl[0])}</p>
 										<p className="track-artist">
 											{this.state.music[index + 1] ? (
 												this.state.music[index + 1].length + ' аудиозаписей'
@@ -937,7 +939,7 @@ class Player extends Component {
 													className={el.cover_css ? 'track-album' : 'track-album noimage'}
 												/>
 												<div className="track-content">
-													<p className="track-name">{el.title}</p>
+													<p dangerouslySetInnerHTML={{__html: el.title}} className="track-name"/>
 													<p className="track-artist">{el.artist}</p>
 												</div>
 											</div>
@@ -978,7 +980,7 @@ class Player extends Component {
 														className={el.cover_css ? 'track-album' : 'track-album noimage'}
 													/>
 													<div className="track-content">
-														<p className="track-name">{el.title}</p>
+														<p dangerouslySetInnerHTML={{__html: el.title}} className="track-name"/>
 														<p className="track-artist">{el.artist}</p>
 													</div>
 												</div>
@@ -1022,7 +1024,7 @@ class Player extends Component {
 													className={el.cover_css ? 'track-album' : 'track-album noimage'}
 												/>
 												<div className="track-content">
-													<p className="track-name">{el.title}</p>
+												<p dangerouslySetInnerHTML={{__html: el.title}} className="track-name"/>
 													<p className="track-artist">{el.artist}</p>
 													{
 															!el.added ? <footer>

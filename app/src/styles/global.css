@@ -71,10 +71,12 @@ body {
   position: absolute;
   z-index: 100;
   padding: 11px 0;
-  height: 14px;
   width: 100%;
   top: 0;
   z-index: 100000;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1;
 }
 
 .win32 #titlebar {
@@ -996,4 +998,9 @@ footer li {
 .albums {
   display: flex;
   overflow-x: scroll;
+}
+
+.ai_subtitle{
+  margin-left: 4px;
+  font-weight: 300;
 }
